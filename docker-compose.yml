@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: some-postgres
+    environment:
+      POSTGRES_DB: bookedWork
+      POSTGRES_USER: javi
+      POSTGRES_PASSWORD: h1dfa342ñ@345.f
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data:/var/lib/postgresql/data
