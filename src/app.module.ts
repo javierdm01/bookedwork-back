@@ -6,6 +6,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { ConexionesModule } from './conexiones/conexiones.module';
+import { EmailModule } from './email/email.module';
 
 
 
@@ -23,6 +24,7 @@ import { ConexionesModule } from './conexiones/conexiones.module';
   }),
     AuthModule,
     ConexionesModule,
+    EmailModule,
   ],
   controllers: [AppController],
   providers: [AppService],

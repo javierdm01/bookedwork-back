@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 
 
-export interface Cliente{
+export interface Cli{
     id_cliente: number;
     email: string;
     nombre: string;

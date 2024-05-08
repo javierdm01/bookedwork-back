@@ -1,7 +1,8 @@
 /* eslint-disable prettier/prettier */
 import { Column, PrimaryGeneratedColumn } from "typeorm";
+import { Cli } from "../cliente.interface";
 
-export class Cliente {
+export class Cliente implements Cli{
     @PrimaryGeneratedColumn({type: 'int',primaryKeyConstraintName: 'id_cliente'})
     id_cliente: number;
 
@@ -32,4 +33,11 @@ export class Cliente {
     @Column({type: 'int', nullable: false,default:0, name: 'rol'})
     rol: number;
 
+
+    //Activation Columns
+    @Column({type: 'boolean', default: false})
+    activated: boolean;
+
+    @Column({type: 'numeric',default: Math.floor(100000 + Math.random() * 900000), nullable: true})
+    activation_token: number;
 }

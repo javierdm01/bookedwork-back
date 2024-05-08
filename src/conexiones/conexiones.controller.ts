@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { ConexionesService } from './conexiones.service';
 import { CreateConexioneDto } from './dto/create-conexione.dto';
