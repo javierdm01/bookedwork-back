@@ -10,6 +10,7 @@ import { EmailController } from 'src/email/email.controller';
 import { EmailService } from 'src/email/email.service';
 import { Conexion } from 'src/conexiones/entities/conexion.entity';
 import { Cliente } from 'src/clientes/entities/cliente.entity';
+import { ConexionesService } from 'src/conexiones/conexiones.service';
 @Module({
 imports:[
     TypeOrmModule.forFeature([Cliente,Conexion]),
@@ -20,7 +21,7 @@ imports:[
 
 ],
     controllers: [AuthController,EmailController],
-    providers: [AuthService,JwStrategy,EmailService],
+    providers: [AuthService,JwStrategy,EmailService,ConexionesService],
 
 })
 export class AuthModule {}

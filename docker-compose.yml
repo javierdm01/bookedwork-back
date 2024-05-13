@@ -3,7 +3,7 @@ version: '3.8'
 services:
   postgres:
     image: postgres:latest
-    container_name: some-postgres
+    container_name: bookedWorks
     environment:
       POSTGRES_DB: bookedWork
       POSTGRES_USER: javi

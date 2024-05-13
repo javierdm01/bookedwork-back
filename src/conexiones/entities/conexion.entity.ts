@@ -1,19 +1,21 @@
 /* eslint-disable prettier/prettier */
 import { Cliente } from "src/clientes/entities/cliente.entity";
-import { Column, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
+@Entity()
 export class Conexion {
     @PrimaryGeneratedColumn({type: 'int',primaryKeyConstraintName: 'id_conexion'})
     id_conexion: number;
 
     //Relacion con la tabla cliente
-    @OneToMany(() => Cliente, cliente => cliente.id_cliente)
-    id_cliente: number;
+    @ManyToOne(() => Cliente, cliente => cliente.id_cliente)
+    cliente: Cliente;
 
-    @Column({type: 'varchar', length: 255, nullable: false, name: 'ip'})
+    @Column({type: 'varchar', length: 17, nullable: false, name: 'ip'})
     ip: string;
 
-    @Column({type:'datetime', nullable: false, name: 'fecha_inicio'})
+    @Column({type:'date', nullable: false, name: 'fecha_inicio'})
     fecha_inicio: Date;
 
 }
+ 

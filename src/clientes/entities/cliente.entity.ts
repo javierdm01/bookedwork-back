@@ -1,7 +1,8 @@
 /* eslint-disable prettier/prettier */
-import { Column, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { Cli } from "../cliente.interface";
 
+@Entity()
 export class Cliente implements Cli{
     @PrimaryGeneratedColumn({type: 'int',primaryKeyConstraintName: 'id_cliente'})
     id_cliente: number;
@@ -21,7 +22,7 @@ export class Cliente implements Cli{
     @Column({type: 'varchar', length: 255, nullable: false, name: 'direccion'})
     direccion: string;
 
-    @Column({type: 'varchar', length: 16, nullable: false, name: 'contrasena'})
+    @Column({type: 'varchar', length: 100 , nullable: false, name: 'contrasena'})
     contrasena: string;
 
     @Column({type: 'date', nullable: false, name: 'fecha_nacimiento'})
@@ -34,10 +35,11 @@ export class Cliente implements Cli{
     rol: number;
 
 
-    //Activation Columns
-    @Column({type: 'boolean', default: false})
+    //Activation Columns 
+    @Column({type: 'boolean', default: false}) 
     activated: boolean;
 
     @Column({type: 'numeric',default: Math.floor(100000 + Math.random() * 900000), nullable: true})
     activation_token: number;
 }
+  

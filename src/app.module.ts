@@ -7,11 +7,15 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { ConexionesModule } from './conexiones/conexiones.module';
 import { EmailModule } from './email/email.module';
+import { ClientesModule } from './clientes/clientes.module';
+import { Cliente } from './clientes/entities/cliente.entity';
 
 
 
 @Module({
-  imports: [ConfigModule.forRoot(),
+  imports: [ConfigModule.forRoot({
+    isGlobal: true,
+  }),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.POSTGRES_HOST,
@@ -22,9 +26,13 @@ import { EmailModule } from './email/email.module';
       entities: ['dist/**/*.entity{.ts,.js}'],
       synchronize: true,
   }),
+  TypeOrmModule.forFeature([
+    Cliente,
+  ]),
     AuthModule,
     ConexionesModule,
     EmailModule,
+    ClientesModule
   ],
   controllers: [AppController],
   providers: [AppService],

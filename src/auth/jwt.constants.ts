@@ -1,4 +1,4 @@
 /* eslint-disable prettier/prettier */
 export const jwtConstants ={
-    secret: process.env.JWTSECRET
+    secret:'j5432n@fj4nhjh42b3v'
 }

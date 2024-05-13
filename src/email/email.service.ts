@@ -26,9 +26,9 @@ export class EmailService {
     async sendEmail(email: string, activationToken: number) {
         if(activationToken === undefined) activationToken= (await this.clienteRepository.findOne({ where: { email } })).activation_token;
     
-    
+        
         try {
-        await this.transporter.sendMail({
+        /*await this.transporter.sendMail({
             from: 'dltcode260@gmail.com',
             to:email,
             subject: "Bienvenido a BookedWork",
@@ -40,10 +40,10 @@ export class EmailService {
             <b>${activationToken}</b> // html body
 
             <p>Si no has solicitado este correo, porfavor ignoralo</p>`,
-        });
+        });*/
         return true
         } catch (error) {
-        throw new Error('Error sending verification email');
+        throw new Error('Error sending verification email'+error);
 
         }
     }

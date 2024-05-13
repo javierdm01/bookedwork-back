@@ -1,1 +1,4 @@
-export class CreateNegocioDto {}
+/* eslint-disable prettier/prettier */
+export class CreateNegocioDto {
+    
+}

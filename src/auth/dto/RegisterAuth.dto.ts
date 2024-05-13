@@ -31,5 +31,6 @@ export class RegisterAuthDto extends LoginAuthDto {
     @IsNotEmpty()
     @MaxLength(255)
     avatar: string;
+    
 
 }
