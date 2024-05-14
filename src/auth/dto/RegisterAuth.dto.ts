@@ -27,10 +27,6 @@ export class RegisterAuthDto extends LoginAuthDto {
     @IsNotEmpty()
     fecha_nacimiento: Date;
 
-    @IsString()
-    @IsNotEmpty()
-    @MaxLength(255)
-    avatar: string;
     
 
 }

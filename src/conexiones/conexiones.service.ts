@@ -13,6 +13,18 @@ export class ConexionesService {
   ) {}
 
   async createNewConexiones(createConexioneDto: CreateConexioneDto) {
+    /*if(createConexioneDto.cliente){
+      const {ip, cliente}= createConexioneDto;
+      const preRows= await this.conexionesRepository.find({
+        where: {cliente},
+        order: {fecha_inicio: 'DESC'},
+        take: 5,
+      });
+      const lastFive= preRows.map((row)=>{
+        if(row.ip==ip) return row;
+      });
+      if(lastFive.length==0)return false
+    };*/
     const newConexiones = this.conexionesRepository.create({
       ...createConexioneDto,
       fecha_inicio: new Date(),

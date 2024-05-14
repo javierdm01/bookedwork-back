@@ -11,6 +11,6 @@ export class S3Controller {
   @Post('uploadFile')
   @UseInterceptors(FileInterceptor('file')) // Interceptor para manejar archivos en la solicitud
   uploadFile(@Body() createS3: CreateS3Dto, @UploadedFile() file: Express.Multer.File): Promise<string> {
-    return this.s3Service.uploadFile(createS3.jFunction, file);
+    return this.s3Service.uploadFile(createS3.username,createS3.jFunction, file);
   }
 }

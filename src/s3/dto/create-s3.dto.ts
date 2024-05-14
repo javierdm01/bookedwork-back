@@ -3,6 +3,7 @@
 
 export class CreateS3Dto {
 
+    username:string;
 
     jFunction: string;
     

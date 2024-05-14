@@ -22,7 +22,8 @@ export class AuthService {
         private readonly emailService: EmailService,
 
         @Inject(ConexionesService)
-        private readonly conexionesService: ConexionesService
+        private readonly conexionesService: ConexionesService,
+
     ){
         
     }
@@ -41,10 +42,16 @@ export class AuthService {
 
         if(!cli.activated) throw new HttpException('Account not activated', 401);
 
-
+        //Obtengo el token
         const token= this.jwtService.sign({id: cli.id_cliente, email: cli.email});
+
+        //Obtengo la IP del cliente
         const ip= await this.getIp()
-        await this.conexionesService.createNewConexiones({ip, cliente: cli});
+
+        //Guardamos la conexion
+        const conexion=await this.conexionesService.createNewConexiones({ip, cliente: cli});
+        if(!conexion) throw new HttpException('IP uknonwn', 409);
+        await this.emailService.ipLocation(cli.email,`http://localhost:3000/conexiones/${token}`);
 
         
 
@@ -54,7 +61,6 @@ export class AuthService {
     }
 
     async registerClient(clientDto: RegisterAuthDto){
-        console.log(clientDto);
         
         const {email,contrasena} = clientDto;
         const cli= await this.clienteRepository.findOne({where: {email}});
@@ -63,18 +69,67 @@ export class AuthService {
         if(cli) throw new HttpException('Client already exists', 409);
 
         //Creamos el nuevo cliente y lo guardamos
+        
         const newClient= this.clienteRepository.create({
             ...clientDto,
             contrasena: await hash(contrasena, 10) ,
-            activated:true
+            activated:true,
         });
         await this.clienteRepository.save(newClient);
 
         
+
         await this.emailService.sendEmail(email,newClient.activation_token);
 
         return newClient;
 
+    }
+
+    async activateClient({email, token}:{email: string, token: number}){
+        const cli= await this.clienteRepository.findOne({where: {email: email, activation_token: token}});
+        if(!cli) throw new HttpException('Invalid pass', 404);
+
+        cli.activated=true;
+        await this.clienteRepository.save(cli);
+
+        return cli;
+    }
+
+    async checkToken({token}:{token:string}): Promise<any>{
+        try {
+            const decoded= this.jwtService.verify(token);
+            return decoded
+        } catch (error) {
+            throw new HttpException('Error Verification Token', 404);
+        }
+    }
+
+    async forggetPassword(email: string){
+        try {
+            const cli= await this.clienteRepository.findOne({where: {email}});
+            if(!cli) throw new HttpException('Client not found', 404);
+            const token=this.jwtService.sign({email:email});
+            await this.emailService.forgottenPassword(email,`http://localhost:3000/resetPassword/${token}`);
+            return true;
+        } catch (error) {
+            return false;
+        }
+    }
+    async resetPassword({token, contrasena}:{token:string, contrasena:string}){
+        try {
+            const decoded=await this.checkToken({token});
+            if(!decoded) throw new HttpException('Invalid token', 404);
+
+            const cli= await this.clienteRepository.findOne({where: {email: decoded.email}});
+            if(!cli) throw new HttpException('Client not found', 404);
+
+            cli.contrasena= await hash(contrasena, 10);
+            await this.clienteRepository.save(cli);
+            
+            return true;
+        } catch (error) {
+            return false;
+        }
     }
 
     //Retornar IP cliente

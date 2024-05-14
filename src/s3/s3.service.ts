@@ -14,7 +14,7 @@ export class S3Service {
     });
   }
 
-  async uploadFile(jFunction:string,file:Express.Multer.File): Promise<string>{
+  async uploadFile(userName:string,jFunction:string,file:Express.Multer.File): Promise<string>{
 
     let key;
     try{

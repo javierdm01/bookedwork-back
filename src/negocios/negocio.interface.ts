@@ -9,6 +9,6 @@ export interface NegocioInterface{
     direccion: string;
     contrasena: string;
     suscripcion: number;
-    avatar: string;
-    imagenes: Array<string>;
+    avatar: Express.Multer.File;
+    imagenes: Array<Express.Multer.File>;
 }

@@ -25,10 +25,10 @@ export class Negocio {
     suscripcion: number;
 
     @Column({type: 'varchar', length: 50, nullable: false})
-    avatar: string; 
+    avatar: Express.Multer.File; 
 
     @Column({type: 'varchar', length: 50, nullable: false})
-    imagenes: Array<string>;
+    imagenes: Array<Express.Multer.File>;
 
     
 }

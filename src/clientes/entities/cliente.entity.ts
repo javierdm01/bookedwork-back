@@ -13,7 +13,7 @@ export class Cliente implements Cli{
     @Column({type: 'varchar', length: 50, nullable: false, name: 'apellidos'})
     apellidos: string;
 
-    @Column({type: 'varchar', length: 50, nullable: false, name: 'email'})
+    @Column({type: 'varchar', length: 50, nullable: false, name: 'email',unique: true})
     email: string;
 
     @Column({type: 'varchar', length: 11, nullable: false, name: 'telefono'})
@@ -29,7 +29,7 @@ export class Cliente implements Cli{
     fecha_nacimiento: Date;
 
     @Column({type: 'varchar', length: 255, nullable: true, name: 'avatar'})
-    avatar: string;
+    avatar: Express.Multer.File;
 
     @Column({type: 'int', nullable: false,default:0, name: 'rol'})
     rol: number;
