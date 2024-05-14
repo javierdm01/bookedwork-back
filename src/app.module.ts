@@ -9,6 +9,7 @@ import { ConexionesModule } from './conexiones/conexiones.module';
 import { EmailModule } from './email/email.module';
 import { ClientesModule } from './clientes/clientes.module';
 import { Cliente } from './clientes/entities/cliente.entity';
+import { S3Module } from './s3/s3.module';
 
 
 
@@ -32,7 +33,8 @@ import { Cliente } from './clientes/entities/cliente.entity';
     AuthModule,
     ConexionesModule,
     EmailModule,
-    ClientesModule
+    ClientesModule,
+    S3Module
   ],
   controllers: [AppController],
   providers: [AppService],
