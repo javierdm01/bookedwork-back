@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
-import { Ofrecen } from "src/ofrecen/entities/ofrecen.entity";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Servicio } from "src/servicios/entities/servicio.entity";
+import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Negocio {
@@ -31,8 +31,8 @@ export class Negocio {
     @Column({type: 'varchar', length: 50, nullable: false})
     imagenes: Array<Express.Multer.File>;
 
-    @OneToMany(()=> Ofrecen, ofrecen => ofrecen.negocio)
-    servicios: Ofrecen[];
+    @ManyToMany(()=> Servicio, servicio => servicio.id_servicio)
+    servicios: Servicio[];
     
     
 }

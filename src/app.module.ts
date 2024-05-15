@@ -14,7 +14,6 @@ import { NegociosModule } from './negocios/negocios.module';
 import { ReservasModule } from './reservas/reservas.module';
 import { ProfesionalesModule } from './profesionales/profesionales.module';
 import { ServiciosModule } from './servicios/servicios.module';
-import { OfrecenModule } from './ofrecen/ofrecen.module';
 
 
 
@@ -44,7 +43,6 @@ import { OfrecenModule } from './ofrecen/ofrecen.module';
     ReservasModule,
     ProfesionalesModule,
     ServiciosModule,
-    OfrecenModule,
   ],
   controllers: [AppController],
   providers: [AppService],

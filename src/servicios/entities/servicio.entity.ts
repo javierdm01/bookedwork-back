@@ -1,9 +1,9 @@
 /* eslint-disable prettier/prettier */
-import { Ofrecen } from "src/ofrecen/entities/ofrecen.entity";
+import { Negocio } from "src/negocios/entities/negocio.entity";
 import { Reserva } from "src/reservas/entities/reserva.entity";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity()
+@Entity() 
 export class Servicio {
     @PrimaryGeneratedColumn({type: 'int',primaryKeyConstraintName: 'id_servicio'})
     id_servicio: number;
@@ -26,8 +26,8 @@ export class Servicio {
     @OneToMany(() => Reserva, reserva => reserva.id_reserva)
     reservas: Reserva[];
 
-    @OneToMany(()=> Ofrecen, ofrecen => ofrecen.servicio)
-    negocios: Ofrecen[];
+    @ManyToMany(()=> Negocio, negocio => negocio.id_negocio)
+    negocios: Negocio[];
     
-    
+     
 }
