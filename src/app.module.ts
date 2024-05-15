@@ -30,6 +30,7 @@ import { ServiciosModule } from './servicios/servicios.module';
       database: process.env.POSTGRES_DATABASE,
       entities: ['dist/**/*.entity{.ts,.js}'],
       synchronize: true,
+      dropSchema:false
   }),
   TypeOrmModule.forFeature([
     Cliente,

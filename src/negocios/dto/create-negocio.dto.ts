@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { IsString } from "class-validator";
+import { IsJSON, IsString } from "class-validator";
 
 
 export class CreateNegocioDto {
@@ -11,15 +11,20 @@ export class CreateNegocioDto {
     email: string;
     
     @IsString()
-    telefono: string;
+    categoria: string;
 
     @IsString()
-    direccion: string;
+    telefono: string;
+
+    @IsJSON()
+    direccion: object;
 
     @IsString()
     contrasena: string;
 
     @IsString()
     avatar?:string;
+
+    imagenes:Array<Express.Multer.File>;
     
 }

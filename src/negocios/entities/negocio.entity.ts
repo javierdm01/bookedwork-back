@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { Servicio } from "src/servicios/entities/servicio.entity";
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Negocio {
@@ -11,27 +11,31 @@ export class Negocio {
     email: string;
 
     @Column({type: 'varchar', length: 50, nullable: false})
+    categoria: string;
+
+    @Column({type: 'varchar', length: 50, nullable: false})
     nombre: string;
 
     @Column({type: 'varchar', length: 50, nullable: false})
     telefono: string;
 
-    @Column({type: 'varchar', length: 50, nullable: false})
-    direccion: string;
+    @Column({type: 'json', nullable: false})
+    direccion: object;
 
-    @Column({type: 'varchar', length: 16, nullable: false})
+    @Column({type: 'varchar', length: 255, nullable: false})
     contrasena: string;
 
     @Column({type: 'int', nullable: false})
     suscripcion: number;
 
-    @Column({type: 'varchar', length: 50, nullable: false})
+    @Column({type: 'varchar', nullable: false})
     avatar: Express.Multer.File; 
-
-    @Column({type: 'varchar', length: 50, nullable: false})
+ 
+    @Column({type: 'varchar', nullable: false})
     imagenes: Array<Express.Multer.File>;
 
-    @ManyToMany(()=> Servicio, servicio => servicio.id_servicio)
+    @ManyToMany(() => Servicio, servicio => servicio.negocios)
+    @JoinTable()//Esto sive para crear una tabla de varios a varios N:M
     servicios: Servicio[];
     
     

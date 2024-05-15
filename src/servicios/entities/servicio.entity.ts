@@ -26,7 +26,7 @@ export class Servicio {
     @OneToMany(() => Reserva, reserva => reserva.id_reserva)
     reservas: Reserva[];
 
-    @ManyToMany(()=> Negocio, negocio => negocio.id_negocio)
+    @ManyToMany(()=> Negocio, negocio => negocio.servicios)
     negocios: Negocio[];
     
      
