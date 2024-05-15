@@ -1,45 +1,19 @@
 /* eslint-disable prettier/prettier */
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Cli } from "../cliente.interface";
+import { Persona } from "src/person/entities/person.entity";
+import { Reserva } from "src/reservas/entities/reserva.entity";
 
 @Entity()
-export class Cliente implements Cli{
+export class Cliente extends Persona implements Cli{
     @PrimaryGeneratedColumn({type: 'int',primaryKeyConstraintName: 'id_cliente'})
     id_cliente: number;
 
-    @Column({type: 'varchar', length: 30, nullable: false, name: 'nombre'})
-    nombre: string;
-
-    @Column({type: 'varchar', length: 50, nullable: false, name: 'apellidos'})
-    apellidos: string;
-
-    @Column({type: 'varchar', length: 50, nullable: false, name: 'email',unique: true})
-    email: string;
-
-    @Column({type: 'varchar', length: 11, nullable: false, name: 'telefono'})
-    telefono: string;
-
-    @Column({type: 'varchar', length: 255, nullable: false, name: 'direccion'})
-    direccion: string;
-
-    @Column({type: 'varchar', length: 100 , nullable: false, name: 'contrasena'})
-    contrasena: string;
-
-    @Column({type: 'date', nullable: false, name: 'fecha_nacimiento'})
-    fecha_nacimiento: Date;
-
-    @Column({type: 'varchar', length: 255, nullable: true, name: 'avatar'})
-    avatar: Express.Multer.File;
-
     @Column({type: 'int', nullable: false,default:0, name: 'rol'})
     rol: number;
+    
+    @OneToMany(() => Reserva, reserva => reserva.cliente)
+    reservas: Reserva[];
 
-
-    //Activation Columns 
-    @Column({type: 'boolean', default: false}) 
-    activated: boolean;
-
-    @Column({type: 'numeric',default: Math.floor(100000 + Math.random() * 900000), nullable: true})
-    activation_token: number;
 }
   

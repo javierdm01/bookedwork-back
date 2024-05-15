@@ -11,6 +11,7 @@ import { ClientesModule } from './clientes/clientes.module';
 import { Cliente } from './clientes/entities/cliente.entity';
 import { S3Module } from './s3/s3.module';
 import { NegociosModule } from './negocios/negocios.module';
+import { ReservasModule } from './reservas/reservas.module';
 
 
 
@@ -37,6 +38,7 @@ import { NegociosModule } from './negocios/negocios.module';
     ClientesModule,
     S3Module,
     NegociosModule,
+    ReservasModule,
   ],
   controllers: [AppController],
   providers: [AppService],
