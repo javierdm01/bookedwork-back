@@ -16,16 +16,16 @@ export class Reserva {
     @Column({type: 'date', nullable: false})
     fechaServicio: Date;
 
-    @Column({type: 'string', nullable: false})
+    @Column({type: 'varchar',length:15, nullable: false})
     estado: string;
 
     @Column({type: 'float', nullable: false})
     coste: number;
 
-    @Column({type: 'string', nullable: false})
-    valoracion: string;
+    @Column({type: 'int', nullable: true})
+    valoracion: number;
 
-    @Column({type: 'string', nullable: false})
+    @Column({type: 'varchar',length:50, nullable: false})
     comentario: string;
 
     //Relaciones 

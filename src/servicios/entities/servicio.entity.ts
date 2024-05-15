@@ -1,4 +1,5 @@
 /* eslint-disable prettier/prettier */
+import { Ofrecen } from "src/ofrecen/entities/ofrecen.entity";
 import { Reserva } from "src/reservas/entities/reserva.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
@@ -20,10 +21,13 @@ export class Servicio {
     duracion: string;
 
     @Column({type: 'varchar', length: 50, nullable: false})
-    etiquetas: Array<string>;
+    etiquetas: Array<string>; 
 
     @OneToMany(() => Reserva, reserva => reserva.id_reserva)
     reservas: Reserva[];
 
+    @OneToMany(()=> Ofrecen, ofrecen => ofrecen.servicio)
+    negocios: Ofrecen[];
+    
     
 }

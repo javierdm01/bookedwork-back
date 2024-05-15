@@ -12,6 +12,9 @@ import { Cliente } from './clientes/entities/cliente.entity';
 import { S3Module } from './s3/s3.module';
 import { NegociosModule } from './negocios/negocios.module';
 import { ReservasModule } from './reservas/reservas.module';
+import { ProfesionalesModule } from './profesionales/profesionales.module';
+import { ServiciosModule } from './servicios/servicios.module';
+import { OfrecenModule } from './ofrecen/ofrecen.module';
 
 
 
@@ -39,6 +42,9 @@ import { ReservasModule } from './reservas/reservas.module';
     S3Module,
     NegociosModule,
     ReservasModule,
+    ProfesionalesModule,
+    ServiciosModule,
+    OfrecenModule,
   ],
   controllers: [AppController],
   providers: [AppService],

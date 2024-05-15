@@ -9,7 +9,7 @@ export class Profesional extends Persona {
     @PrimaryGeneratedColumn({type: 'int',primaryKeyConstraintName: 'id_profesional'})
     id_profesional: number;
 
-    @Column({type: 'string',length:9, nullable: false})
+    @Column({type: 'varchar',length:9, nullable: false})
     DNI: string;
 
     @Column({type: 'int', nullable: false})
@@ -21,7 +21,7 @@ export class Profesional extends Persona {
     @Column({type: 'int', nullable: false})
     rol: number;
 
-    @Column({type: 'string', nullable: false})
+    @Column({type: 'varchar', nullable: false})
     especialidad: string;
 
     //Relaciones
