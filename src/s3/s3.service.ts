@@ -14,27 +14,29 @@ export class S3Service {
     });
   }
 
-  async uploadFile(userName:string,jFunction:string,file:Express.Multer.File): Promise<string>{
-
+  async uploadFile(userName:string,jFunction:string,files:Array<Express.Multer.File>): Promise<string[]>{
     let key;
     try{
       switch(jFunction){
           case 'avatar':
-              key= `avatar/${file.originalname}`;
+              key= `avatar/${userName}-${new Date().toISOString()}`;
               break;
           default:
-              key= `negocio/${jFunction}/${file.originalname}`;
+              key= `negocio/${userName}/${userName}-${new Date().toISOString()}`;
       }
-      const params = {
-        Bucket: 'bookedwork-img',
-        Key: key,
-        Body: Readable.from(file.buffer),
-        ContentType: file.mimetype,
-      };
-
-    
-      const result = await this.s3.upload(params).promise();
-      return result.Location; // Devuelve la URL del archivo en S3
+      const results=[]
+      await files.forEach(async (file) => {
+        const params = {
+          Bucket: 'bookedwork-img',
+          Key: key,
+          Body: Readable.from(file.buffer),
+          ContentType: file.mimetype,
+        };
+      
+        const r=(await this.s3.upload(params).promise().then((data) => data.Location))
+        results.push(r)
+      })
+      return results
     } catch (error) {
       console.error('Error uploading file to S3:', error);
       throw error;

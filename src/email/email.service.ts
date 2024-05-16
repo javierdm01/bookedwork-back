@@ -116,4 +116,27 @@ export class EmailService {
 
         }
     }
+
+    async sendMailNegocio(email: string, activationToken: number){
+        if(activationToken === undefined) activationToken= (await this.clienteRepository.findOne({ where: { email } })).activation_token;
+        try {
+            await this.transporter.sendMail({
+                from: 'info@bookedWork.com',
+                to:email,
+                subject: "Bienvenido a BookedWork Negocios",
+                html: `<h1>Hola, bienvenido a BookedWork Negocios</h1>
+                <p>Es un placer darte las gracias por unirte a nosotros para dar a conocer tus servicios al mundo.</p>
+                <p>Para proteger tus datos y los de tus clientes, necesitamos comprobar que eres tu,
+                <p>Porfavor introduzca este código de activacion en la ventana de verificación: </p>
+                
+                <b>${activationToken}</b>
+
+                <p>Si no has solicitado este correo, porfavor ignoralo</p>`,
+            });
+        return true
+        } catch (error) {
+        throw new Error('Error sending verification email'+error);
+
+        }
+    }
 }

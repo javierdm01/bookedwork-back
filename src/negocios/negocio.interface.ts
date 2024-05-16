@@ -4,6 +4,7 @@
 export interface NegocioInterface{
     id_negocio: number;
     email: string;
+    cif: string;
     nombre: string;
     telefono: string;
     direccion: string;
@@ -11,4 +12,4 @@ export interface NegocioInterface{
     suscripcion: number;
     avatar: Express.Multer.File;
     imagenes: Array<Express.Multer.File>;
-}
+} 

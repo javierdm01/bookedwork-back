@@ -11,9 +11,11 @@ import { EmailService } from 'src/email/email.service';
 import { Conexion } from 'src/conexiones/entities/conexion.entity';
 import { Cliente } from 'src/clientes/entities/cliente.entity';
 import { ConexionesService } from 'src/conexiones/conexiones.service';
+import { Negocio } from 'src/negocios/entities/negocio.entity';
+import { S3Service } from 'src/s3/s3.service';
 @Module({
 imports:[
-    TypeOrmModule.forFeature([Cliente,Conexion]),
+    TypeOrmModule.forFeature([Cliente,Conexion,Negocio]),
     JwtModule.register({
         secret: jwtConstants.secret,
         signOptions: {expiresIn: '300s'}
@@ -21,7 +23,7 @@ imports:[
 
 ],
     controllers: [AuthController,EmailController],
-    providers: [AuthService,JwStrategy,EmailService,ConexionesService],
+    providers: [AuthService,JwStrategy,EmailService,ConexionesService,S3Service],
 
 })
 export class AuthModule {}

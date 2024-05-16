@@ -9,6 +9,9 @@ import { LoginAuthDto } from './dto/LoginAuth.dto';
 import { EmailService } from 'src/email/email.service';
 import { RegisterAuthDto } from './dto/RegisterAuth.dto';
 import { ConexionesService } from 'src/conexiones/conexiones.service';
+import { Negocio } from 'src/negocios/entities/negocio.entity';
+import { RegisterNegocioAuthDto } from './dto/RegisterNegocioAuth.dto';
+import { S3Service } from 'src/s3/s3.service';
 
 @Injectable()
 export class AuthService {
@@ -23,6 +26,12 @@ export class AuthService {
 
         @Inject(ConexionesService)
         private readonly conexionesService: ConexionesService,
+        
+        @InjectRepository(Negocio)
+        private negocioRepository: Repository<Negocio>,
+
+        @Inject(S3Service)
+        private readonly s3Service: S3Service,
 
     ){
         
@@ -138,5 +147,32 @@ export class AuthService {
         .then(response=>response.json())
         .then(data=>data.ip);
         return ip;
+    }
+
+    async registerNegocio(negocioDto: RegisterNegocioAuthDto,imagenes: Array<Express.Multer.File>){
+            
+            const {email,nombre,contrasena,CIF} = negocioDto;
+            const neg= await this.negocioRepository.findOne({where:[
+                {email},
+                {nombre},
+                {CIF}
+            ] });
+    
+            //Si el negocio ya existe lanzamos un error
+            if (neg) throw new HttpException('Negocio already exists', 409);
+            const imagenesArray= await this.s3Service.uploadFile(nombre,'negocio',imagenes);
+            //Creamos el nuevo negocio y lo guardamos
+            const newNegocio = this.negocioRepository.create({
+                ...negocioDto,
+                contrasena: await hash(contrasena, 10),
+                activated: true,
+                imagenes: imagenesArray,
+            });
+            await this.negocioRepository.save(newNegocio);
+
+            await this.emailService.sendMailNegocio(email, newNegocio.activation_token);
+
+            return newNegocio;
+
     }
 }

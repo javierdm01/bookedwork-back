@@ -1,9 +1,11 @@
 /* eslint-disable prettier/prettier */
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterAuthDto } from './dto/RegisterAuth.dto';
 import { LoginAuthDto } from './dto/LoginAuth.dto';
 import { CheckTokenDto } from './dto/CheckToken.dto';
+import { RegisterNegocioAuthDto } from './dto/RegisterNegocioAuth.dto';
+import { FilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('auth')
 export class AuthController {
@@ -27,5 +29,10 @@ export class AuthController {
     @Post('checkToken')
     checkToken(@Body() checktoken: CheckTokenDto){
         return this.authService.checkToken(checktoken)
+    }
+    @Post('registerNegocio')
+    @UseInterceptors(FilesInterceptor('imagenes'))
+    registerNegocio(@Body() negocioObject: RegisterNegocioAuthDto,@UploadedFiles() imagenes: Array<Express.Multer.File>){
+        return this.authService.registerNegocio(negocioObject,imagenes)
     }
 }

@@ -7,6 +7,6 @@ export class CreateS3Dto {
 
     jFunction: string;
     
-    file: Express.Multer.File;
+    files: Array<Express.Multer.File>;
     
 }
