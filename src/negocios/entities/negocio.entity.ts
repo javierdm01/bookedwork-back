@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { Servicio } from "src/servicios/entities/servicio.entity";
-import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Negocio {
@@ -34,8 +34,7 @@ export class Negocio {
     @Column({type: 'varchar', nullable: false})
     imagenes: Array<Express.Multer.File>;
 
-    @ManyToMany(() => Servicio, servicio => servicio.negocios)
-    @JoinTable()//Esto sive para crear una tabla de varios a varios N:M
+    @ManyToOne(() => Servicio, servicio => servicio.negocios)
     servicios: Servicio[];
     
     

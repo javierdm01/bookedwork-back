@@ -1,26 +1,20 @@
+/* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
 import { CreateProfesionaleDto } from './dto/create-profesionale.dto';
-import { UpdateProfesionaleDto } from './dto/update-profesionale.dto';
+import { Profesional } from './entities/profesionales.entity';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class ProfesionalesService {
-  create(createProfesionaleDto: CreateProfesionaleDto) {
-    return 'This action adds a new profesionale';
+  constructor(
+    @InjectRepository(Profesional)
+    private profesionaleRepository: Repository<Profesional>,
+  ){}
+  crearProfesional(createProfesionaleDto: CreateProfesionaleDto) {
+    const profesional = this.profesionaleRepository.create(createProfesionaleDto);
+    return this.profesionaleRepository.save(profesional);
   }
 
-  findAll() {
-    return `This action returns all profesionales`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} profesionale`;
-  }
-
-  update(id: number, updateProfesionaleDto: UpdateProfesionaleDto) {
-    return `This action updates a #${id} profesionale`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} profesionale`;
-  }
 }
+ 

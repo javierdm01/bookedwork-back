@@ -1,7 +1,8 @@
 /* eslint-disable prettier/prettier */
 import { Negocio } from "src/negocios/entities/negocio.entity";
+import { Profesional } from "src/profesionales/entities/profesionales.entity";
 import { Reserva } from "src/reservas/entities/reserva.entity";
-import { Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity() 
 export class Servicio {
@@ -17,8 +18,8 @@ export class Servicio {
     @Column({type: 'varchar', length: 255, nullable: false})
     descripcion: string;
 
-    @Column({type: 'varchar', length: 10, nullable: false})
-    duracion: string;
+    @Column({type: 'int', nullable: false})
+    duracion: number;
 
     @Column({type: 'varchar', length: 50, nullable: false})
     etiquetas: Array<string>; 
@@ -26,8 +27,15 @@ export class Servicio {
     @OneToMany(() => Reserva, reserva => reserva.id_reserva)
     reservas: Reserva[];
 
-    @ManyToMany(()=> Negocio, negocio => negocio.servicios)
-    negocios: Negocio[];
+    @OneToMany(()=> Negocio, negocio => negocio.servicios)
+    negocios: Negocio;
     
+    @ManyToMany(()=> Profesional, profesional => profesional.servicios)
+    @JoinTable({
+        name: 'profesional_servicio',
+        joinColumn: {name: 'id_servicio', referencedColumnName: 'id_servicio'},
+        inverseJoinColumn: {name: 'id_profesional', referencedColumnName: 'id_profesional'}
+    })
+    profesionales: Profesional[];
      
 }

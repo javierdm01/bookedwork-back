@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 
 import { Cliente } from "src/clientes/entities/cliente.entity";
-import { Profesional } from "src/profesionales/entities/profesionale.entity";
+import { Profesional } from "src/profesionales/entities/profesionales.entity";
 import { Servicio } from "src/servicios/entities/servicio.entity";
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
@@ -25,7 +25,7 @@ export class Reserva {
     @Column({type: 'int', nullable: true})
     valoracion: number;
 
-    @Column({type: 'varchar',length:50, nullable: false})
+    @Column({type: 'varchar',length:50, nullable: true})
     comentario: string;
 
     //Relaciones 

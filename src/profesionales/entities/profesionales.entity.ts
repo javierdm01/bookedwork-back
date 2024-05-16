@@ -2,7 +2,8 @@
 
 import { Persona } from "src/person/entities/person.entity";
 import { Reserva } from "src/reservas/entities/reserva.entity";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Servicio } from "src/servicios/entities/servicio.entity";
+import { Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Profesional extends Persona {
@@ -28,6 +29,8 @@ export class Profesional extends Persona {
     @OneToMany(() => Reserva, reserva => reserva.profesional)
     reservas: Reserva[];
     
+    @ManyToMany(()=> Servicio, servicio => servicio.profesionales)
+    servicios: Servicio[];
 
     
 }
