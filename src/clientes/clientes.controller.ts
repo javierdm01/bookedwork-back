@@ -1,12 +1,23 @@
 /* eslint-disable prettier/prettier */
-import { Controller } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ClientesService } from './clientes.service';
+import { JwtAuthGuard } from 'src/auth/jwt.guard';
 
 @Controller('clientes')
 export class ClientesController {
   constructor(private readonly clientesService: ClientesService) {}
 
 
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
+  @Post('reservas')
+  verReservas(@Body('email') email: string) {
+    return this.clientesService.verReservas(email);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('info')
+  verInfoCliente(@Body('email') email: string) {
+    return this.clientesService.verInfoCliente(email);
+  }
 
 }

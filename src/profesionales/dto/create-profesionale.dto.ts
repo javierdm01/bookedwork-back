@@ -12,7 +12,7 @@ export class CreateProfesionaleDto {
     direccion: string;
     contrasena: string;
     fecha_nacimiento: Date;
-    avatar: Express.Multer.File;
+    avatar: Array<Express.Multer.File>;
     activated: boolean;
     activation_token: number;
 }

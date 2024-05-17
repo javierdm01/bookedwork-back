@@ -16,13 +16,14 @@ export class S3Service {
 
   async uploadFile(userName:string,jFunction:string,files:Array<Express.Multer.File>): Promise<string[]>{
     let key;
+    const date=new Date().toISOString()
     try{
       switch(jFunction){
           case 'avatar':
-              key= `avatar/${userName}-${new Date().toISOString()}`;
+              key= `avatar/${userName}-${date.replaceAll(':','')}`;
               break;
           default:
-              key= `negocio/${userName}/${userName}-${new Date().toISOString()}`;
+              key= `negocio/${userName}/${userName}-${date.replaceAll(':','')}`;
       }
       const results=[]
       await files.forEach(async (file) => {
@@ -42,5 +43,17 @@ export class S3Service {
       throw error;
     }
   }
-}
 
+  async deleteFile(url: string) {
+    const params = {
+      Bucket: 'bookedwork-img',
+      Key: JSON.stringify(url).split('.com/')[1],
+    };
+    try {
+      return await this.s3.deleteObject(params).promise();
+    } catch (error) {
+      console.error('Error deleting file from S3:', error);
+      throw error;
+    }
+  }
+}

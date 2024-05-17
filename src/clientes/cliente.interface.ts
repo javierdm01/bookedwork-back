@@ -11,5 +11,5 @@ export interface Cli{
     contrasena: string;
     fecha_nacimiento?: Date;
     rol: number;
-    avatar?: Express.Multer.File;
+    avatar?: string;
 }

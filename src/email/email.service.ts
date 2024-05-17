@@ -139,4 +139,276 @@ export class EmailService {
 
         }
     }
+
+    async sendEmailValoraciones(email: string, nombreCliente:string, nombreNegocio:string, urlValoracion:string){
+        try {
+            await this.transporter.sendMail({
+                from: 'info@bookedWork.com',
+                to:email,
+                subject: "Bienvenido a BookedWork",
+                html: `<!DOCTYPE html>
+                <html lang="es">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Valora tu experiencia</title>
+                    <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
+                    <style>
+                        body {
+                            font-family: Arial, sans-serif;
+                            background-color: #f4f4f4;
+                            margin: 0;
+                            padding: 0;
+                        }
+                        .container {
+                            width: 100%;
+                            max-width: 600px;
+                            margin: 0 auto;
+                            background-color: #ffffff;
+                            padding: 20px;
+                            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                        }
+                        .header {
+                            background-color: #4CAF50;
+                            color: #ffffff;
+                            text-align: center;
+                            padding: 10px 0;
+                        }
+                        .content {
+                            padding: 20px;
+                            text-align: center;
+                        }
+                        .button {
+                            background-color: #4CAF50;
+                            color: #ffffff;
+                            padding: 10px 20px;
+                            text-decoration: none;
+                            border-radius: 5px;
+                            display: inline-block;
+                        }
+                        .footer {
+                            text-align: center;
+                            padding: 10px 0;
+                            color: #777777;
+                            font-size: 12px;
+                        }
+                        .flex{
+                            display: flex;
+                            justify-content: center;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="header">
+                            <h1>Dejanos Tu Valoracion</h1>
+                        </div>
+                        <div class="content">
+                            <h2>¡Nos gustaría saber tu opinión!</h2>
+                            <p>Hola ${nombreCliente},</p>
+                            <p>Gracias por utilizar nuestros servicios. Nos encantaría saber cómo fue tu experiencia en ${nombreNegocio}.</p>
+                            <p>Nos gustaría saber todo, tanto de los trabajadores como del negocio. 😉</p>
+                            <p>Por favor, tómate un momento para valorar nuestro servicio haciendo clic en el botón de abajo:</p>
+                            <div class="flex">
+                                <a href="http://localhost:3000/valoraciones/${urlValoracion}?val=1" class="button"><i class="fa-regular fa-star"></i></a>
+                                <a href="http://localhost:3000/valoraciones/${urlValoracion}?val=2" class="button"><i class="fa-regular fa-star"></i></a>
+                                <a href="http://localhost:3000/valoraciones/${urlValoracion}?val=3" class="button"><i class="fa-regular fa-star"></i></a>
+                                <a href="http://localhost:3000/valoraciones/${urlValoracion}?val=4" class="button"><i class="fa-regular fa-star"></i></a>
+                                <a href="http://localhost:3000/valoraciones/${urlValoracion}?val=5" class="button"><i class="fa-regular fa-star"></i></a>
+                            </div>
+                            </p>
+                            <p>¡Gracias por tu tiempo y esperamos verte pronto!</p>
+                        </div>
+                        <div class="footer">
+                            <p>Booked Work | Todos los derechos reservados</p>
+                        </div>
+                    </div>
+                </body>
+                </html>`
+                
+            });
+            return true
+            } catch (error) {
+            throw new Error('Error sending verification email'+error);
+    
+            }
+    }
+
+    async sendEmailReserva(email: string, nombreCliente:string, nombreNegocio:string, fecha:Date){
+        try {
+            await this.transporter.sendMail({
+                from: 'info@bookedWork.com',
+                to:email,
+                subject: "Gracias por tu reserva",
+                html: `<!DOCTYPE html>
+                <html lang="es">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Valora tu experiencia</title>
+                    <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
+                    <style>
+                        body {
+                            font-family: Arial, sans-serif;
+                            background-color: #f4f4f4;
+                            margin: 0;
+                            padding: 0;
+                        }
+                        .container {
+                            width: 100%;
+                            max-width: 600px;
+                            margin: 0 auto;
+                            background-color: #ffffff;
+                            padding: 20px;
+                            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                        }
+                        .header {
+                            background-color: #4CAF50;
+                            color: #ffffff;
+                            text-align: center;
+                            padding: 10px 0;
+                        }
+                        .content {
+                            padding: 20px;
+                            text-align: center;
+                        }
+                        .button {
+                            background-color: #4CAF50;
+                            color: #ffffff;
+                            padding: 10px 20px;
+                            text-decoration: none;
+                            border-radius: 5px;
+                            display: inline-block;
+                        }
+                        .footer {
+                            text-align: center;
+                            padding: 10px 0;
+                            color: #777777;
+                            font-size: 12px;
+                        }
+                        .flex{
+                            display: flex;
+                            justify-content: center;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="header">
+                            <h1>Gracias Por Tu Reserva</h1>
+                        </div>
+                        <div class="content">
+                            <h2>Queriamos agradecerte por reservar un servicio con nosotros</h2>
+                            <p>Hola ${nombreCliente},</p>
+                            <p>Gracias por utilizar nuestros servicios.</p>
+                            <p>Queremos recordarte, que has reservado tu servicio con ${nombreNegocio}.</p>
+                            <p>La fecha para la realización de la actividad es el dia <b>${fecha.getTime()}</b> ${fecha.getMonth()+1} de ${fecha.getFullYear()} </p>
+                            <p>La hora escogida para la realización del mismo es : ${fecha.getHours()}:${fecha.getMinutes()}</p>
+                            <p>Esperamos que disfrutes de tu experiencia y que nos des tu opinión sobre la misma.</p>
+                            </p>
+                            <p>¡Gracias por tu tiempo y esperamos verte pronto!</p>
+                        </div>
+                        <div class="footer">
+                            <p>Booked Work | Todos los derechos reservados</p>
+                        </div>
+                    </div>
+                </body>
+                </html>`
+                
+            });
+            return true
+            } catch (error) {
+            throw new Error('Error sending verification email'+error);
+    
+            }
+
+    }
+
+    async sendEmailCancelacion(email: string, nombreCliente:string, nombreNegocio:string, fecha:Date){
+        try {
+            await this.transporter.sendMail({
+                from: 'info@bookedWork.com',
+                to:email,
+                subject: "Cancelación de reserva",
+                html: `<!DOCTYPE html>
+                <html lang="es">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Cancelación de reserva</title>
+                    <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
+                    <style>
+                        body {
+                            font-family: Arial, sans-serif;
+                            background-color: #f4f4f4;
+                            margin: 0;
+                            padding: 0;
+                        }
+                        .container {
+                            width: 100%;
+                            max-width: 600px;
+                            margin: 0 auto;
+                            background-color: #ffffff;
+                            padding: 20px;
+                            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                        }
+                        .header {
+                            background-color: #4CAF50;
+                            color: #ffffff;
+                            text-align: center;
+                            padding: 10px 0;
+                        }
+                        .content {
+                            padding: 20px;
+                            text-align: center;
+                        }
+                        .button {
+                            background-color: #4CAF50;
+                            color: #ffffff;
+                            padding: 10px 20px;
+                            text-decoration: none;
+                            border-radius: 5px;
+                            display: inline-block;
+                        }
+                        .footer {
+                            text-align: center;
+                            padding: 10px 0;
+                            color: #777777;
+                            font-size: 12px;
+                        }
+                        .flex{
+                            display: flex;
+                            justify-content: center;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="header">
+                            <h1>Cancelación de Reserva</h1>
+                        </div>
+                        <div class="content">
+                            <h2>Hola ${nombreCliente},</h2>
+                            <p>Gracias por utilizar nuestros servicios.</p>
+                            <p>Queremos recordarte,que tu cancelacion de la reserva de tu servicio con ${nombreNegocio} se ha cancelado.</p>
+                            <p>La fecha de la actividad del día <b>${fecha.getTime()}</b> ${fecha.getMonth()+1} de ${fecha.getFullYear()}, ha sido cancelada correctamente </p>
+                            <p>Esperamos que vuelvas a confiar en nosotros pronto.</p>
+                            </p>
+                            <p>¡Gracias por tu tiempo y esperamos verte pronto!</p>
+                        </div>
+                        <div class="footer">
+                            <p>Booked Work | Todos los derechos reservados</p>
+                        </div>
+                    </div>
+                </body>
+                </html>`
+                
+            });
+            return true
+            } catch (error) {
+            throw new Error('Error sending verification email'+error);
+    
+            }
+
+    }
 }

@@ -17,4 +17,9 @@ export class S3Controller {
     return this.s3Service.uploadFile(createS3.username,createS3.jFunction, files);
   }
 
+  @Post('deleteFile')
+  deleteFile(@Body() url: string) {
+    return this.s3Service.deleteFile(url);
+  }
+
 }

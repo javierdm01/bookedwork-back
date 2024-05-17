@@ -34,4 +34,6 @@ export class CreateClienteDto {
     @IsNotEmpty()
     rol: number;
 
+    avatar?: Express.Multer.File;
+
 }

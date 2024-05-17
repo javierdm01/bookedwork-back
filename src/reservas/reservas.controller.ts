@@ -9,5 +9,10 @@ export class ReservasController {
   realizarReserva(@Body() realizarReserva: RealizarReservaDto) {
     return this.reservasService.realizarReserva(realizarReserva);
   }*/
+
+  @Post('modificarEstado')
+  modificarEstado(@Body() id: number) {
+    return this.reservasService.modificarEstado(id);
+  }
   
 }

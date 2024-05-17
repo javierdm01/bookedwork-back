@@ -22,8 +22,7 @@ export class CreateNegocioDto {
     @IsString()
     contrasena: string;
 
-    @IsString()
-    avatar?:string;
+    avatar?:Express.Multer.File;
 
     imagenes:Array<Express.Multer.File>;
     

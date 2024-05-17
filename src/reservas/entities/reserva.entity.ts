@@ -10,13 +10,16 @@ export class Reserva {
     @PrimaryGeneratedColumn({type: 'int',primaryKeyConstraintName: 'id_reserva'})
     id_reserva: number;
 
+    @Column({type: 'varchar', unique:true, nullable: false})
+    token:string;
+
     @Column({type: 'date', nullable: false})
     fechaReserva: Date;
 
     @Column({type: 'date', nullable: false})
     fechaServicio: Date;
 
-    @Column({type: 'varchar',length:15, nullable: false})
+    @Column({type: 'varchar',default:'Activa',length:15, nullable: false})
     estado: string;
 
     @Column({type: 'float', nullable: false})

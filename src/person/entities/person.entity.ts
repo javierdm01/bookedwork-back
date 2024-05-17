@@ -25,7 +25,7 @@ export class Persona {
     fecha_nacimiento: Date;
 
     @Column({type: 'varchar', length: 255, nullable: true, name: 'avatar'})
-    avatar: Express.Multer.File;
+    avatar: string;
 
     //Activation Columns 
     @Column({type: 'boolean', default: false}) 
