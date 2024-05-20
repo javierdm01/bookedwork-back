@@ -35,6 +35,14 @@ export class ReservasService {
     if(!servicio) throw new Error('Servicio no encontrado')
     const profesional=await this.profesionalRepository.findOne({where: {id_profesional: createReservaDto.idProfesional}})
     if(!profesional) throw new Error('Profesional no encontrado')
+    const reservasExistentes= await this.reservaRepository.find({where: {profesional}})
+    reservasExistentes.forEach(reserva=>{
+      const duracion= reserva.servicio.duracion
+      const fechaInicio= reserva.fechaServicio
+      const fechaFin= new Date(fechaInicio.getTime() + duracion*60000)
+      if(createReservaDto.fechaServicio>fechaInicio && createReservaDto.fechaServicio<fechaFin) throw new Error('El profesional ya tiene una reserva en esa franja horaria')
+    })
+
     const token=await hash(createReservaDto.emailCliente+createReservaDto.fechaServicio,10)
     const reserva=await this.reservaRepository.create({
       ...createReservaDto,
@@ -46,6 +54,7 @@ export class ReservasService {
     })
     await this.reservaRepository.save(reserva)
     this.emailService.sendEmailReserva(reserva.cliente.email,reserva.cliente.nombre,reserva.servicio.negocios.nombre,reserva.fechaServicio);
+    return reserva;
 
   }
 
