@@ -14,4 +14,9 @@ export class NegociosController {
     return this.negociosService.buscarNegocios(buscarNegocio);
   }
 
+  @Post('verReservas')
+  verReservas(@Body() email: string) {
+    return this.negociosService.verReservas({re:email});
+  }
+
 }

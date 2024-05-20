@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { Servicio } from "src/servicios/entities/servicio.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Negocio {
@@ -16,7 +16,7 @@ export class Negocio {
     @Column({type: 'varchar', length: 50, nullable: false})
     categoria: string;
 
-    @Column({type: 'varchar', length: 50, nullable: false})
+    @Column({type: 'varchar', length: 50,unique:true, nullable: false})
     nombre: string;
 
     @Column({type: 'varchar', length: 50, nullable: false})
@@ -43,7 +43,7 @@ export class Negocio {
     @Column({type: 'int',default: Math.floor(100000 + Math.random() * 900000), nullable: true})
     activation_token: number;
 
-    @ManyToOne(() => Servicio, servicio => servicio.negocios)
+    @OneToMany(() => Servicio, servicio => servicio.negocios)
     servicios: Servicio[];
     
     

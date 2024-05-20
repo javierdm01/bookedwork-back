@@ -31,15 +31,15 @@ export class Reserva {
     @Column({type: 'varchar',length:50, nullable: true})
     comentario: string;
 
-    //Relaciones 
+    //Relaciones  
 
-    @ManyToOne(() => Cliente, cliente => cliente.id_cliente)
+    @ManyToOne(() => Cliente, cliente => cliente.reservas)
     cliente: Cliente;
 
-    @ManyToOne(() => Servicio, servicio => servicio.id_servicio)
+    @ManyToOne(() => Servicio, servicio => servicio.reservas)
     servicio: Servicio;
 
-    @ManyToOne(()=> Profesional, profesional => profesional.id_profesional)
+    @ManyToOne(()=> Profesional, profesional => profesional.reservas)
     profesional: Profesional;
 
     

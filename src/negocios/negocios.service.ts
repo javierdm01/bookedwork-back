@@ -4,6 +4,8 @@ import { BuscarNegocioDto } from './dto/buscar-negocio.dto';
 import { Raw, Repository } from 'typeorm';
 import { Negocio } from './entities/negocio.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Reserva } from 'src/reservas/entities/reserva.entity';
+import { Servicio } from 'src/servicios/entities/servicio.entity';
 
 
 @Injectable()
@@ -11,6 +13,10 @@ export class NegociosService {
   constructor(
     @InjectRepository(Negocio)
     private readonly negocioRepository: Repository<Negocio>,
+    @InjectRepository(Reserva)
+    private readonly reservaRepository: Repository<Reserva>,
+    @InjectRepository(Servicio)
+    private readonly servicioRepository: Repository<Servicio>,
   ) {}
 
     //Buscar Negocios
@@ -49,6 +55,19 @@ export class NegociosService {
         return {categoriaQuery,servicioQuery};
 
 
+    }
+
+    async verReservas({re}): Promise<Reserva[]> {
+        const {email}=re
+        const negocio = await this.negocioRepository.findOne({ where: { email} });
+        if (!negocio) throw new Error('Negocio no encontrado');
+        const servicios=await this.servicioRepository.find({where:{id_servicio:1}})
+        console.log(servicios)
+        const services=[]
+        servicios.forEach(async (servicio) => {
+            services.push(this.reservaRepository.find({ where: { servicio } }))
+        })
+        return services
     }
 
 }

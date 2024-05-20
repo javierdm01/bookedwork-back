@@ -2,7 +2,7 @@
 import { Negocio } from "src/negocios/entities/negocio.entity";
 import { Profesional } from "src/profesionales/entities/profesionales.entity";
 import { Reserva } from "src/reservas/entities/reserva.entity";
-import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity() 
 export class Servicio {
@@ -27,7 +27,7 @@ export class Servicio {
     @OneToMany(() => Reserva, reserva => reserva.id_reserva)
     reservas: Reserva[];
 
-    @OneToMany(()=> Negocio, negocio => negocio.servicios)
+    @ManyToOne(()=> Negocio, negocio => negocio.servicios)
     negocios: Negocio;
     
     @ManyToMany(()=> Profesional, profesional => profesional.servicios)
