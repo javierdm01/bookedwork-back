@@ -51,24 +51,50 @@ export class NegociosService {
                 },
         });
         
+        if(servicioQuery){
+            servicioQuery.forEach(async (negocio) => {
+                const reservas= await this.verReservas({re:negocio})
+                reservas.forEach(async (reserva) => {
+                    const duracionEnMilisegundos = reserva.servicio.duracion * 60 * 1000;
+                    const fechaFinServicio = new Date(reserva.fechaServicio.getTime() + duracionEnMilisegundos);
+                    if(buscarNegocio.fechaServicio<reserva.fechaServicio || buscarNegocio.fechaServicio>fechaFinServicio){
+                        negocio.servicios.map((servicio) =>{
+                            if(reserva.servicio==servicio){
+                                servicioQuery.splice(servicioQuery.indexOf(negocio),1)
+                            } 
+                        })
+                        
+                    }
+                })
+            })
+        }
         //Retornamos primero la categoría y luego el servicio, ya que la categoría tiene prioridad
         return {categoriaQuery,servicioQuery};
 
 
     }
 
-    async verReservas({re}): Promise<Reserva[]> {
-        const {email}=re
-        const negocio = await this.negocioRepository.findOne({ where: { email} });
+    async verReservas({ re }): Promise<Reserva[]> {
+        const { email } = re;
+        
+        // Buscar el negocio por email, incluyendo sus servicios
+        const negocio = await this.negocioRepository.findOne({
+          where: { email },
+          relations: { servicios: true },
+        });
+      
         if (!negocio) throw new Error('Negocio no encontrado');
-        const servicios=await this.servicioRepository.find({where:{id_servicio:1}})
-        console.log(servicios)
-        const services=[]
-        servicios.forEach(async (servicio) => {
-            services.push(this.reservaRepository.find({ where: { servicio } }))
-        })
-        return services
-    }
+        
+        const services = [];
+      
+        // Utilizar un bucle for...of para iterar sobre los servicios
+        for (const servicio of negocio.servicios) {
+          const reservas = await this.reservaRepository.find({ where: { servicio } });
+          services.push(...reservas);
+        }
+        return services;
+      }
+      
 
 }
  

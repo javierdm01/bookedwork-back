@@ -234,11 +234,18 @@ export class EmailService {
             }
     }
 
-    async sendEmailReserva(email: string, nombreCliente:string, nombreNegocio:string, fecha:Date){
+    async sendEmailReserva(email: string, nombreCliente: string, nombreNegocio: string, fecha: Date) {
         try {
+            const fechaServicio = new Date(fecha);
+            const dia = fechaServicio.getDate();
+            const mes = fechaServicio.getMonth() + 1; // Los meses en JavaScript son 0-indexed.
+            const anio = fechaServicio.getFullYear();
+            const hora = fechaServicio.getHours();
+            const minutos = fechaServicio.getMinutes();
+    
             await this.transporter.sendMail({
                 from: 'info@bookedWork.com',
-                to:email,
+                to: email,
                 subject: "Gracias por tu reserva",
                 html: `<!DOCTYPE html>
                 <html lang="es">
@@ -286,7 +293,7 @@ export class EmailService {
                             color: #777777;
                             font-size: 12px;
                         }
-                        .flex{
+                        .flex {
                             display: flex;
                             justify-content: center;
                         }
@@ -298,14 +305,13 @@ export class EmailService {
                             <h1>Gracias Por Tu Reserva</h1>
                         </div>
                         <div class="content">
-                            <h2>Queriamos agradecerte por reservar un servicio con nosotros</h2>
+                            <h2>Queríamos agradecerte por reservar un servicio con nosotros</h2>
                             <p>Hola ${nombreCliente},</p>
                             <p>Gracias por utilizar nuestros servicios.</p>
-                            <p>Queremos recordarte, que has reservado tu servicio con ${nombreNegocio}.</p>
-                            <p>La fecha para la realización de la actividad es el dia <b>${fecha.getTime()}</b> ${fecha.getMonth()+1} de ${fecha.getFullYear()} </p>
-                            <p>La hora escogida para la realización del mismo es : ${fecha.getHours()}:${fecha.getMinutes()}</p>
+                            <p>Queremos recordarte que has reservado tu servicio con ${nombreNegocio}.</p>
+                            <p>La fecha para la realización de la actividad es el día <b>${dia}</b> de <b>${mes}</b> de <b>${anio}</b>.</p>
+                            <p>La hora escogida para la realización del mismo es: ${hora.toString().padStart(2, '0')}:${minutos.toString().padStart(2, '0')}.</p>
                             <p>Esperamos que disfrutes de tu experiencia y que nos des tu opinión sobre la misma.</p>
-                            </p>
                             <p>¡Gracias por tu tiempo y esperamos verte pronto!</p>
                         </div>
                         <div class="footer">
@@ -314,15 +320,13 @@ export class EmailService {
                     </div>
                 </body>
                 </html>`
-                
             });
-            return true
-            } catch (error) {
-            throw new Error('Error sending verification email'+error);
-    
-            }
-
+            return true;
+        } catch (error) {
+            throw new Error('Error sending reservation email: ' + error.message);
+        }
     }
+    
 
     async sendEmailCancelacion(email: string, nombreCliente:string, nombreNegocio:string, fecha:Date){
         try {

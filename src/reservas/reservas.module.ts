@@ -8,9 +8,10 @@ import { EmailService } from 'src/email/email.service';
 import { Negocio } from 'src/negocios/entities/negocio.entity';
 import { Cliente } from 'src/clientes/entities/cliente.entity';
 import { Profesional } from 'src/profesionales/entities/profesionales.entity';
+import { Servicio } from 'src/servicios/entities/servicio.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Reserva,Negocio,Cliente,Profesional])],
+  imports: [TypeOrmModule.forFeature([Reserva,Negocio,Cliente,Profesional,Servicio])],
   controllers: [ReservasController],
   providers: [ReservasService,EmailService],
 })

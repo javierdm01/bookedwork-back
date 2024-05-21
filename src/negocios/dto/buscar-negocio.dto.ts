@@ -9,5 +9,7 @@ export class BuscarNegocioDto {
 
     direccion: object;
 
+    fechaServicio: Date;
+    
     
 }

@@ -3,7 +3,7 @@
 import { Cliente } from "src/clientes/entities/cliente.entity";
 import { Profesional } from "src/profesionales/entities/profesionales.entity";
 import { Servicio } from "src/servicios/entities/servicio.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Reserva {
@@ -13,10 +13,10 @@ export class Reserva {
     @Column({type: 'varchar', unique:true, nullable: false})
     token:string;
 
-    @Column({type: 'date', nullable: false})
+    @Column({type: 'timestamp', nullable: false})
     fechaReserva: Date;
 
-    @Column({type: 'date', nullable: false})
+    @Column({type: 'timestamp', nullable: false})
     fechaServicio: Date;
 
     @Column({type: 'varchar',default:'Activa',length:15, nullable: false})
@@ -34,12 +34,15 @@ export class Reserva {
     //Relaciones  
 
     @ManyToOne(() => Cliente, cliente => cliente.reservas)
+    @JoinColumn({ name: 'cliente_id' })
     cliente: Cliente;
 
     @ManyToOne(() => Servicio, servicio => servicio.reservas)
+    @JoinColumn({ name: 'servicio_id' })
     servicio: Servicio;
 
     @ManyToOne(()=> Profesional, profesional => profesional.reservas)
+    @JoinColumn({ name: 'profesional_id' })
     profesional: Profesional;
 
     

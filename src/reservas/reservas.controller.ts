@@ -1,14 +1,15 @@
 /* eslint-disable prettier/prettier */
 import { Body, Controller, Post } from '@nestjs/common';
 import { ReservasService } from './reservas.service';
+import { CreateReservaDto } from './dto/create-reserva.dto';
 @Controller('reservas')
 export class ReservasController {
   constructor(private readonly reservasService: ReservasService) {}
 
-  /*@Post('realizarReserva')
-  realizarReserva(@Body() realizarReserva: RealizarReservaDto) {
-    return this.reservasService.realizarReserva(realizarReserva);
-  }*/
+  @Post('realizarReserva')
+  crearReserva(@Body() realizarReserva: CreateReservaDto) {
+    return this.reservasService.crearReserva(realizarReserva);
+  }
 
   @Post('modificarEstado')
   modificarEstado(@Body() id: number) {

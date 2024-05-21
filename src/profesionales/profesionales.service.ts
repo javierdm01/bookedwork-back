@@ -32,6 +32,7 @@ export class ProfesionalesService {
     if(!profesional) throw new Error('Profesional no encontrado')
     return this.reservasRepository.find({where: {profesional}})
   }
+  
 
 
 

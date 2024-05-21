@@ -3,7 +3,7 @@
 import { Persona } from "src/person/entities/person.entity";
 import { Reserva } from "src/reservas/entities/reserva.entity";
 import { Servicio } from "src/servicios/entities/servicio.entity";
-import { Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Profesional extends Persona {
@@ -14,7 +14,7 @@ export class Profesional extends Persona {
     DNI: string;
 
     @Column({type: 'int', nullable: false})
-    experiencia: number;
+    experiencia: number; 
 
     @Column({type: 'float', nullable: false})
     valoracion: number;
@@ -30,6 +30,11 @@ export class Profesional extends Persona {
     reservas: Reserva[];
     
     @ManyToMany(()=> Servicio, servicio => servicio.profesionales)
+    @JoinTable({
+        name: 'profesional_servicio',
+        joinColumn: {name: 'id_profesional', referencedColumnName: 'id_profesional'},
+        inverseJoinColumn: {name: 'id_servicio', referencedColumnName: 'id_servicio'}
+    })
     servicios: Servicio[];
 
     
