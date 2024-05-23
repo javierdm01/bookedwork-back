@@ -142,4 +142,22 @@ export class ReservasService {
       estado: 'Cancelada',
     });
   }
+
+  async comprobarDisponibilidad({id_servicio, fecha}:{id_servicio: number, fecha: Date}){
+    const horarios = [];
+    const servicio = await this.servicioRepository.findOne({where: {id_servicio}});
+    if (!servicio) throw new Error('Servicio no encontrado');
+    const profesional = await this.profesionalRepository.findOne({where: {servicios: servicio}});
+    if (!profesional) throw new Error('Profesional no encontrado');
+    const reservas = await this.reservaRepository.find({where: {profesional}, relations: {servicio: true}});
+    reservas.forEach(reserva => {
+      const duracion = reserva.servicio.duracion;
+      const fechaInicio = reserva.fechaServicio;
+      const fechaFin = new Date(fechaInicio.getTime() + duracion * 60000);
+      if (fecha.getTime() >= fechaInicio.getTime() && fecha.getTime() < fechaFin.getTime()){
+        horarios.push(fechaInicio);
+      }
+    });
+    return horarios;
+  }
 }
