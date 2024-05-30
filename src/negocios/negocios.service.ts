@@ -22,58 +22,69 @@ export class NegociosService {
     //Buscar Negocios
     async buscarNegocios(buscarNegocio: BuscarNegocioDto) {
         const { nombre, direccion } = buscarNegocio;
-        //Busquedad por categoría y ciudad
-        const categoriaQuery = await this.negocioRepository.find({
-            where: [{
-                 
-                    categoria: Raw(() => `unaccent(lower(categoria)) ILIKE unaccent(lower('%${nombre}%'))`) 
-                ,
-                
-                    direccion: Raw(() => `unaccent(lower(direccion ->> 'ciudad')) ILIKE '%' || unaccent(lower('${(direccion as any).ciudad}')) || '%'`) 
-                
-            },
-            {
-                    nombre: Raw(() => `unaccent(lower(nombre)) ILIKE unaccent(lower('%${nombre}%'))`) 
+        console.log(buscarNegocio);
+      
+        // Búsqueda por categoría y ciudad
+        if(nombre){
+            const categoriaQuery = await this.negocioRepository.find({
+                where: [{
+                     
+                        categoria: Raw(() => `unaccent(lower(categoria)) ILIKE unaccent(lower('%${nombre}%'))`) 
                     ,
                     
-                    direccion: Raw(() => `unaccent(lower(direccion ->> 'ciudad')) ILIKE '%' || unaccent(lower('${(direccion as any).ciudad}')) || '%'`) 
-            }
-        ]
-        });
-        //Busquedad por servicio y ciudad
-        const servicioQuery = await this.negocioRepository.find({
-            where: 
-                {
-                    servicios: {
-                        nombre: Raw(alias => `unaccent(lower(${alias})) ILIKE '%' || unaccent(lower('${nombre}')) || '%'`)
-                    },
-                    direccion: Raw(() => `unaccent(lower(direccion ->> 'ciudad')) ILIKE '%' || unaccent(lower('${(direccion as any).ciudad}')) || '%'`)
+                        direccion: Raw(() => `unaccent(lower(direccion ->> 'ciudad')) ILIKE '%' || unaccent(lower('${(direccion as any).ciudad}')) || '%'`) 
+                    
                 },
-        });
-        
-        if(servicioQuery){
-            servicioQuery.forEach(async (negocio) => {
-                const reservas= await this.verReservas({re:negocio})
-                reservas.forEach(async (reserva) => {
-                    const duracionEnMilisegundos = reserva.servicio.duracion * 60 * 1000;
-                    const fechaFinServicio = new Date(reserva.fechaServicio.getTime() + duracionEnMilisegundos);
-                    if(buscarNegocio.fechaServicio<reserva.fechaServicio || buscarNegocio.fechaServicio>fechaFinServicio){
-                        negocio.servicios.map((servicio) =>{
-                            if(reserva.servicio==servicio){
-                                servicioQuery.splice(servicioQuery.indexOf(negocio),1)
-                            } 
-                        })
+                {
+                        nombre: Raw(() => `unaccent(lower(nombre)) ILIKE unaccent(lower('%${nombre}%'))`) 
+                        ,
                         
-                    }
+                        direccion: Raw(() => `unaccent(lower(direccion ->> 'ciudad')) ILIKE '%' || unaccent(lower('${(direccion as any).ciudad}')) || '%'`) 
+                }
+            ]
+            });
+            //Busquedad por servicio y ciudad
+            const servicioQuery = await this.negocioRepository.find({
+                where: 
+                    {
+                        servicios: {
+                            nombre: Raw(alias => `unaccent(lower(${alias})) ILIKE '%' || unaccent(lower('${nombre}')) || '%'`)
+                        },
+                        direccion: Raw(() => `unaccent(lower(direccion ->> 'ciudad')) ILIKE '%' || unaccent(lower('${(direccion as any).ciudad}')) || '%'`)
+                    },
+              });
+        
+      
+              if(servicioQuery){
+                servicioQuery.forEach(async (negocio) => {
+                    const reservas= await this.verReservas({re:negocio})
+                    reservas.forEach(async (reserva) => {
+                        const duracionEnMilisegundos = reserva.servicio.duracion * 60 * 1000;
+                        const fechaFinServicio = new Date(reserva.fechaServicio.getTime() + duracionEnMilisegundos);
+                        if(buscarNegocio.fechaServicio<reserva.fechaServicio || buscarNegocio.fechaServicio>fechaFinServicio){
+                            negocio.servicios.map((servicio) =>{
+                                if(reserva.servicio==servicio){
+                                    servicioQuery.splice(servicioQuery.indexOf(negocio),1)
+                                } 
+                            })
+                            
+                        }
+                    })
                 })
-            })
+            }
+            return { categoriaQuery, servicioQuery };
+        }else{
+            const servicios= await this.negocioRepository.find({where:{ direccion: Raw(() => `unaccent(lower(direccion ->> 'ciudad')) ILIKE '%' || unaccent(lower('Madrid')) `) }});
+            console.log(servicios,(direccion as any).ciudad)
+            return{servicios}
         }
-        //Retornamos primero la categoría y luego el servicio, ya que la categoría tiene prioridad
-        return {categoriaQuery,servicioQuery};
-
-
+      
+        
+      }
+      
+    async allNegocios(): Promise<Negocio[]> {
+        return this.negocioRepository.find();
     }
-
     async verReservas({ re }): Promise<Reserva[]> {
         const { email } = re;
         
