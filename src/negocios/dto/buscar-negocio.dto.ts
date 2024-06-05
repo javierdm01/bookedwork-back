@@ -7,9 +7,18 @@ export class BuscarNegocioDto {
     @IsString()
     nombre: string;
 
-    direccion: object;
+    ubicacion: {
+        calle?:string;
+        ciudad?:string;
+        otros?:string;
+    };
 
-    fechaServicio: Date;
+    fecha: Date;
+
+    horario:{
+        inicio: string;
+        fin:string;
+    }
     
     
 }

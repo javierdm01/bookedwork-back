@@ -2,6 +2,7 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ClientesService } from './clientes.service';
 import { JwtAuthGuard } from 'src/auth/jwt.guard';
+import { UpdateClienteDto } from './dto/update-cliente.dto';
 
 @Controller('clientes')
 export class ClientesController {
@@ -18,6 +19,11 @@ export class ClientesController {
   @Post('info')
   verInfoCliente(@Body('email') email: string) {
     return this.clientesService.verInfoCliente(email);
+  }
+
+  @Post('update')
+  updateCliente(@Body() updateClientDto:UpdateClienteDto) {
+    return this.clientesService.updateCliente(updateClientDto);
   }
 
 }

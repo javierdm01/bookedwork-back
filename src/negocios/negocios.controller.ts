@@ -11,7 +11,7 @@ export class NegociosController {
 
   @Post('buscarNegocios')
   buscarNegocios(@Body() buscarNegocio: BuscarNegocioDto) {
-    return this.negociosService.buscarNegocios(buscarNegocio);
+    return this.negociosService.buscarNegociosPorCriterios(buscarNegocio);
   }
 
   @Post('verReservas')

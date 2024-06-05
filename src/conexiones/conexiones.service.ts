@@ -4,6 +4,7 @@ import { CreateConexioneDto } from './dto/create-conexione.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Conexion } from './entities/conexion.entity';
+import { addDays } from 'date-fns';
 
 @Injectable()
 export class ConexionesService {
@@ -28,6 +29,7 @@ export class ConexionesService {
     const newConexiones = this.conexionesRepository.create({
       ...createConexioneDto,
       fecha_inicio: new Date(),
+      fechaExpiracion: addDays(new Date(),5)
     });
     return this.conexionesRepository.save(newConexiones);
   }

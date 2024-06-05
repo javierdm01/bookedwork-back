@@ -40,16 +40,16 @@ export class AuthService {
     async loginClient(clientDto: LoginAuthDto): Promise<{cliente:Cliente, token:string}> {
         const {email, contrasena} = clientDto;
         const cli= await this.clienteRepository.findOne({where: {email}});
-
+        console.log(cli)
         //Comprobacion de que el cliente existe
 
-        if (!cli) throw new HttpException('Invalid credentials', 404);
+        if (!cli) throw new HttpException('Correo o contraseña invalida', 404);
 
         const isPasswordValid= await compare(contrasena, cli.contrasena)
 
-        if (!isPasswordValid) throw new HttpException('Invalid credentials', 404);
+        if (!isPasswordValid) throw new HttpException('Correo o contraseña invalida', 404);
 
-        if(!cli.activated) throw new HttpException('Account not activated', 401);
+        if(!cli.activated) throw new HttpException('La cuenta no está activada', 401);
 
         //Obtengo el token
         const token= this.jwtService.sign({id: cli.id_cliente, email: cli.email});
@@ -59,10 +59,8 @@ export class AuthService {
 
         //Guardamos la conexion
         const conexion=await this.conexionesService.createNewConexiones({ip, cliente: cli});
-        if(!conexion) throw new HttpException('IP uknonwn', 409);
+        if(!conexion) throw new HttpException('IP Desconocida', 409);
         await this.emailService.ipLocation(cli.email,`http://localhost:3000/conexiones/${token}`);
-
-        
 
         //Retornamos el cliente y el token
         return {cliente: cli, token};
@@ -70,35 +68,44 @@ export class AuthService {
     }
 
     async registerClient(clientDto: RegisterAuthDto){
-        
-        const {email,contrasena} = clientDto;
-        const cli= await this.clienteRepository.findOne({where: {email}});
+        try {
+            const {email,contrasena} = clientDto;
+            console.log(clientDto)
+            const telf=clientDto.telefono.split('+34')[1].trim()
+            const cli= await this.clienteRepository.findOne({where: [{email},{telefono:telf}]});
 
         //Si el cliente ya existe lanzamos un error
-        if(cli) throw new HttpException('Client already exists', 409);
+        if(cli) throw new HttpException('Ya hay un cliente asociado al correo o al número de teléfono.', 409);
 
         //Creamos el nuevo cliente y lo guardamos
-        
+        const hasedPassword=contrasena ?await hash(contrasena, 10):''
         const newClient= this.clienteRepository.create({
             ...clientDto,
-            contrasena: await hash(contrasena, 10) ,
-            activated:true,
+            telefono:telf,
+            contrasena: hasedPassword,
         });
-        await this.clienteRepository.save(newClient);
-
+        const newCli=await this.clienteRepository.save(newClient);
+        if(!newCli) throw new HttpException('Ha ocurrido un error al guardar el usuario. Intentelo de nuevo o más tarde.',501)
         
 
-        await this.emailService.sendEmail(email,newClient.activation_token);
-
+        if(!newCli.activated)await this.emailService.sendEmail(email,newClient.activation_token);
+        console.log(newClient)
         return newClient;
+        } catch (error) {
+            console.log(error)
+            throw new HttpException(error,405)
+        }
 
     }
 
     async activateClient({email, token}:{email: string, token: number}){
+        console.log(email)        
         const cli= await this.clienteRepository.findOne({where: {email: email, activation_token: token}});
-        if(!cli) throw new HttpException('Invalid pass', 404);
+        console.log(cli)
+        if(!cli) throw new HttpException('El token es invalido, intentalo de nuevo.', 404);
 
         cli.activated=true;
+        cli.activation_token=null;
         await this.clienteRepository.save(cli);
 
         return cli;
@@ -112,7 +119,27 @@ export class AuthService {
             throw new HttpException('Error Verification Token', 404);
         }
     }
+    async checkEmail({email}:{email:string}){
+        console.log(email)
+        const cli= await this.clienteRepository.findOne({where: {email}});
+        console.log(cli)
+        if(cli){
+            return true
+        }else{
+            return false
+        }
+    }
 
+    async resendToken({email}:{email:string}){
+        const cli= await this.clienteRepository.findOne({where: {email}});
+        console.log(cli)
+        await this.emailService.sendEmail(email,cli.activation_token);
+        if(cli){
+            return true
+        }else{
+            return false
+        }
+    }
     async forggetPassword(email: string){
         try {
             const cli= await this.clienteRepository.findOne({where: {email}});

@@ -17,5 +17,7 @@ export class Conexion {
     @Column({type:'date', nullable: false, name: 'fecha_inicio'})
     fecha_inicio: Date;
 
+    @Column({type:'timestamp' })
+    fechaExpiracion: Date;
 }
  

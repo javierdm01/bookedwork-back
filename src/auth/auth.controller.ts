@@ -30,6 +30,16 @@ export class AuthController {
     checkToken(@Body() checktoken: CheckTokenDto){
         return this.authService.checkToken(checktoken)
     }
+
+    @Post('checkEmail')
+    checkEmail(@Body() email){
+        return this.authService.checkEmail(email)
+    }
+
+    @Post('resendToken')
+    resendToken(@Body() email){
+        return this.authService.resendToken(email)
+    }
     @Post('registerNegocio')
     @UseInterceptors(FilesInterceptor('imagenes'))
     registerNegocio(@Body() negocioObject: RegisterNegocioAuthDto,@UploadedFiles() imagenes: Array<Express.Multer.File>){

@@ -7,7 +7,7 @@ export interface Cli{
     nombre: string;
     apellidos: string;
     telefono: string;
-    direccion: string;
+    direccion: Object;
     contrasena: string;
     fecha_nacimiento?: Date;
     rol: number;
