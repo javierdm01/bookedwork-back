@@ -39,14 +39,18 @@ export class ClientesService {
   async updateCliente(modificarCliente:UpdateClienteDto):Promise<Cliente>{
     const cliente=await this.clienteRepository.findOne({where: {email:modificarCliente.email}})
     if(!cliente) throw new Error('Cliente no encontrado')
-    if(modificarCliente.nombre) cliente.nombre=modificarCliente.nombre
-    if(modificarCliente.telefono) cliente.telefono=modificarCliente.telefono
+      let newAvatar;
     if(modificarCliente.avatar){
       if(cliente.avatar){
-        await this.s3Service.deleteFile('https://bookedwork-img.s3.eu-north-1.amazonaws.com/negocio/Cositas+ricas/Cositas+ricas-2024-05-16T11%3A11%3A34.441Z')
+        await this.s3Service.deleteFile(cliente.avatar)
       }
-      //cliente.avatar=await this.s3Service.upload(modificarCliente.avatar)
+       newAvatar=await this.s3Service.uploadOneFile(cliente.nombre,'avatar',modificarCliente.avatar)
     }
+    const clienteUpdate: Partial<Cliente>={
+      ...modificarCliente,
+      avatar:newAvatar
+   }
+    await this.clienteRepository.update(cliente,clienteUpdate)
     await this.clienteRepository.save(cliente)
     return cliente
   }

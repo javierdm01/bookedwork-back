@@ -43,7 +43,34 @@ export class S3Service {
       throw error;
     }
   }
-
+  async uploadOneFile(userName:string,jFunction:string,files:Express.Multer.File): Promise<string>{
+    let key;
+    const date=new Date().toISOString()
+    try{
+      switch(jFunction){
+          case 'avatar':
+              key= `avatar/${userName}-${date.replaceAll(':','')}`;
+              break;
+          default:
+              key= `negocio/${userName}/${userName}-${date.replaceAll(':','')}`;
+      }
+      const results=[]
+        const params = {
+          Bucket: 'bookedwork-img',
+          Key: key,
+          Body: Readable.from(files.buffer),
+          ContentType: files.mimetype,
+        }
+        const r=(await this.s3.upload(params).promise().then((data) => data.Location))
+        console.log(r)
+        results.push(r)
+        return results.toString()
+    } catch (error) {
+      console.error('Error uploading file to S3:', error);
+      throw error;
+    }
+  }
+  
   async deleteFile(url: string) {
     const params = {
       Bucket: 'bookedwork-img',

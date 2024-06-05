@@ -15,13 +15,13 @@ export class Persona {
     @Column({type: 'varchar', length: 11, nullable: false, name: 'telefono'})
     telefono: string;
 
-    @Column({type: 'varchar', length: 255, nullable: false, name: 'direccion'})
-    direccion: string;
+    @Column({type: 'json', nullable: true, name: 'direccion'})
+    direccion: Object;
 
-    @Column({type: 'varchar', length: 100 , nullable: false, name: 'contrasena'})
+    @Column({type: 'varchar', length: 100 , nullable: true, name: 'contrasena'})
     contrasena: string;
 
-    @Column({type: 'date', nullable: false, name: 'fecha_nacimiento'})
+    @Column({type: 'date', nullable: true, name: 'fecha_nacimiento'})
     fecha_nacimiento: Date;
 
     @Column({type: 'varchar', length: 255, nullable: true, name: 'avatar'})

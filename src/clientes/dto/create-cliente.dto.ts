@@ -23,7 +23,6 @@ export class CreateClienteDto {
     direccion: string;
 
     @IsString()
-    @IsNotEmpty()
     contrasena: string;
 
     @IsDate()
@@ -34,6 +33,6 @@ export class CreateClienteDto {
     @IsNotEmpty()
     rol: number;
 
-    avatar?: Express.Multer.File;
+    
 
 }

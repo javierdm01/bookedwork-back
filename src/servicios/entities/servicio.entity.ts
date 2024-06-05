@@ -2,15 +2,15 @@
 import { Negocio } from "src/negocios/entities/negocio.entity";
 import { Profesional } from "src/profesionales/entities/profesionales.entity";
 import { Reserva } from "src/reservas/entities/reserva.entity";
-import { Column, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn,JoinColumn } from "typeorm";
 
 @Entity() 
 export class Servicio {
     @PrimaryGeneratedColumn({type: 'int',primaryKeyConstraintName: 'id_servicio'})
     id_servicio: number;
-
+ 
     @Column({type: 'float', nullable: false})
-    coste: number;
+    coste: number; 
 
     @Column({type: 'varchar', length: 50,unique: true, nullable: false})
     nombre: string;
@@ -28,6 +28,7 @@ export class Servicio {
     reservas: Reserva[];
 
     @ManyToOne(()=> Negocio, negocio => negocio.servicios)
+    @JoinColumn({ name: 'negocio_id' })
     negocios: Negocio;
     
     @ManyToMany(()=> Profesional, profesional => profesional.servicios)

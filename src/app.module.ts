@@ -47,7 +47,6 @@ import { ServiciosModule } from './servicios/servicios.module';
     ReservasModule,
     ProfesionalesModule,
     ServiciosModule,
-    
   ],
   controllers: [AppController],
   providers: [AppService],

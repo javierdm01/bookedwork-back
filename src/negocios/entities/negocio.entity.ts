@@ -34,9 +34,9 @@ export class Negocio {
     @Column({type: 'int', nullable: false,default:0})
     suscripcion: number;
 
-    @Column({type: 'varchar', nullable: false})
+    @Column({type: 'varchar',array:true, nullable: true})
     imagenes: Array<string>;
-
+ 
     @Column({type: 'boolean', default: false}) 
     activated: boolean;
 
@@ -46,5 +46,7 @@ export class Negocio {
     @OneToMany(() => Servicio, servicio => servicio.negocios)
     servicios: Servicio[];
     
+    @Column({type:'float',default:0,nullable:false})
+    valoracion:number;
     
 }

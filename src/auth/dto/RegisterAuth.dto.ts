@@ -16,16 +16,13 @@ export class RegisterAuthDto extends LoginAuthDto {
 
     @IsString()
     @IsNotEmpty()
-    @MaxLength(11)
+    @MaxLength(14)
     telefono: string;
 
-    @IsString()
-    @IsNotEmpty()
-    @MaxLength(255)
-    direccion: string;
 
-    @IsNotEmpty()
-    fecha_nacimiento: Date;
+    activated?:boolean;
+    avatar?:string;
+
 
     
 
