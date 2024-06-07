@@ -21,5 +21,10 @@ export class ReservasController {
   comprobarDisponibilidad(@Body() comprobarDisponibilidad: DisponibilidadReservaDto) {
     return this.reservasService.comprobarDisponibilidad(comprobarDisponibilidad);
   }
-  
+
+  @Post('verValoraciones')
+  verValoraciones() {
+    return this.reservasService.verValoraciones();
+  }
+
 }

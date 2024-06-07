@@ -12,6 +12,8 @@ import { ConexionesService } from 'src/conexiones/conexiones.service';
 import { Negocio } from 'src/negocios/entities/negocio.entity';
 import { RegisterNegocioAuthDto } from './dto/RegisterNegocioAuth.dto';
 import { S3Service } from 'src/s3/s3.service';
+import { ForggetPasswordDto } from './dto/ForggetPassword.dto';
+import { resetPasswordDto } from './dto/ResetPassword.dto';
 
 @Injectable()
 export class AuthService {
@@ -32,28 +34,29 @@ export class AuthService {
 
         @Inject(S3Service)
         private readonly s3Service: S3Service,
-
-    ){
         
+    ){
     }
 
     async loginClient(clientDto: LoginAuthDto): Promise<{cliente:Cliente, token:string}> {
-        const {email, contrasena} = clientDto;
+        console.log(clientDto)
+        try {
+            const {email, contrasena} = clientDto;
         const cli= await this.clienteRepository.findOne({where: {email}});
-        console.log(cli)
+        console.log(cli) 
         //Comprobacion de que el cliente existe
 
         if (!cli) throw new HttpException('Correo o contraseña invalida', 404);
 
-        const isPasswordValid= await compare(contrasena, cli.contrasena)
+        const isPasswordValid= await compare(contrasena, cli.contrasena,)
 
         if (!isPasswordValid) throw new HttpException('Correo o contraseña invalida', 404);
 
-        if(!cli.activated) throw new HttpException('La cuenta no está activada', 401);
+        if(!cli.activated) throw new HttpException('La cuenta no está activada', 404);
 
         //Obtengo el token
         const token= this.jwtService.sign({id: cli.id_cliente, email: cli.email});
-
+        console.log(token) 
         //Obtengo la IP del cliente
         const ip= await this.getIp()
 
@@ -64,14 +67,19 @@ export class AuthService {
 
         //Retornamos el cliente y el token
         return {cliente: cli, token};
+        } catch (error) {
+            console.log(error)
+            return error
+        }
 
     }
 
     async registerClient(clientDto: RegisterAuthDto){
+        console.log(clientDto)
         try {
-            const {email,contrasena} = clientDto;
-            console.log(clientDto)
-            const telf=clientDto.telefono.split('+34')[1].trim()
+            const {email,contrasena,fechaNacimiento} = clientDto;
+            console.log(fechaNacimiento)
+            const telf=clientDto.telefono.trim()
             const cli= await this.clienteRepository.findOne({where: [{email},{telefono:telf}]});
 
         //Si el cliente ya existe lanzamos un error
@@ -83,6 +91,7 @@ export class AuthService {
             ...clientDto,
             telefono:telf,
             contrasena: hasedPassword,
+            fecha_nacimiento:new Date(fechaNacimiento)
         });
         const newCli=await this.clienteRepository.save(newClient);
         if(!newCli) throw new HttpException('Ha ocurrido un error al guardar el usuario. Intentelo de nuevo o más tarde.',501)
@@ -105,18 +114,19 @@ export class AuthService {
         if(!cli) throw new HttpException('El token es invalido, intentalo de nuevo.', 404);
 
         cli.activated=true;
-        cli.activation_token=null;
         await this.clienteRepository.save(cli);
 
         return cli;
     }
 
-    async checkToken({token}:{token:string}): Promise<any>{
+    async checkToken(token:number): Promise<any>{
         try {
-            const decoded= this.jwtService.verify(token);
-            return decoded
+            console.log(token)
+            const cli= await this.clienteRepository.findOne({where: {activation_token: token}});
+            if(!cli) throw new HttpException('Client not found', 404);
+            return cli
         } catch (error) {
-            throw new HttpException('Error Verification Token', 404);
+            throw new HttpException('Error Verification Token'+error, 404);
         }
     }
     async checkEmail({email}:{email:string}){
@@ -140,25 +150,28 @@ export class AuthService {
             return false
         }
     }
-    async forggetPassword(email: string){
+    async forggetPassword(email:object){
+        const correo=email['email'].trim()
+        console.log(correo)
+
         try {
-            const cli= await this.clienteRepository.findOne({where: {email}});
+            const cli= await this.clienteRepository.findOne({where: {email:correo}});
+            console.log(cli)
             if(!cli) throw new HttpException('Client not found', 404);
-            const token=this.jwtService.sign({email:email});
-            await this.emailService.forgottenPassword(email,`http://localhost:3000/resetPassword/${token}`);
+            if(!cli.activated) throw new HttpException('La cuenta no está activada', 404);
+            const res=await this.emailService.forgottenPassword(cli.email,`http://localhost:3000/auth/resetPassword?ecode=${cli.activation_token}`);
+            console.log(res)
             return true;
         } catch (error) {
-            return false;
+            console.log(error)
+            return error;
         }
     }
-    async resetPassword({token, contrasena}:{token:string, contrasena:string}){
+    async resetPassword(resetPassword:resetPasswordDto){
+        const {token, contrasena}=resetPassword
         try {
-            const decoded=await this.checkToken({token});
-            if(!decoded) throw new HttpException('Invalid token', 404);
-
-            const cli= await this.clienteRepository.findOne({where: {email: decoded.email}});
+            const cli= await this.checkToken(token)
             if(!cli) throw new HttpException('Client not found', 404);
-
             cli.contrasena= await hash(contrasena, 10);
             await this.clienteRepository.save(cli);
             

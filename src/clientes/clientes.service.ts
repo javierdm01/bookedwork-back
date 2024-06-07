@@ -26,14 +26,19 @@ export class ClientesService {
     return this.reservasRepository.find({where: {cliente}})
   }
 
-  async verInfoCliente(email: string) : Promise<Partial<Cliente>>{
+  async verInfoCliente(email: string) {
     const cliente=await this.clienteRepository.findOne({where: {email}})
+    console.log(cliente)
+    console.log('pertenece al cliente')
     if(!cliente) throw new Error('Cliente no encontrado')
     return {
       nombre: cliente.nombre,
+      apellidos:cliente.apellidos,
       email: cliente.email,
       telefono: cliente.telefono,
       avatar: cliente.avatar,
+      fechaNacimiento: cliente.fecha_nacimiento,
+      direccion:cliente.direccion
     } 
   }
   async updateCliente(modificarCliente:UpdateClienteDto):Promise<Cliente>{

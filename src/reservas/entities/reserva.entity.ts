@@ -28,9 +28,11 @@ export class Reserva {
     @Column({type: 'int', nullable: true})
     valoracion: number;
 
-    @Column({type: 'varchar',length:50, nullable: true})
+    @Column({type: 'varchar',length:255, nullable: true})
     comentario: string;
 
+    @Column({type: 'varchar',length:255, nullable: true})
+    titulo: string;
     //Relaciones  
 
     @ManyToOne(() => Cliente, cliente => cliente.reservas)
@@ -44,6 +46,7 @@ export class Reserva {
     @ManyToOne(()=> Profesional, profesional => profesional.reservas)
     @JoinColumn({ name: 'profesional_id' })
     profesional: Profesional;
+
 
     
     

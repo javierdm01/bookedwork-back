@@ -30,7 +30,6 @@ export class CreateClienteDto {
     fecha_nacimiento: Date;
 
     @IsNumber()
-    @IsNotEmpty()
     rol: number;
 
     

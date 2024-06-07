@@ -9,7 +9,7 @@ export class Cliente extends Persona implements Cli{
     @PrimaryGeneratedColumn({type: 'int',primaryKeyConstraintName: 'id_cliente'})
     id_cliente: number;
 
-    @Column({type: 'int', nullable: false,default:0, name: 'rol'})
+    @Column({type: 'int', nullable: true,default:0, name: 'rol'})
     rol: number;
     
     @OneToMany(() => Reserva, reserva => reserva.cliente)
