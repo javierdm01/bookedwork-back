@@ -141,6 +141,9 @@ export class NegociosService {
         return this.negocioRepository.find({
             skip:bucle,
             take:5,
+            order:{
+                id_negocio:"DESC"
+            }
         })
     }
 

@@ -14,6 +14,7 @@ import { RegisterNegocioAuthDto } from './dto/RegisterNegocioAuth.dto';
 import { S3Service } from 'src/s3/s3.service';
 import { ForggetPasswordDto } from './dto/ForggetPassword.dto';
 import { resetPasswordDto } from './dto/ResetPassword.dto';
+import { Profesional } from 'src/profesionales/entities/profesionales.entity';
 
 @Injectable()
 export class AuthService {
@@ -35,19 +36,24 @@ export class AuthService {
         @Inject(S3Service)
         private readonly s3Service: S3Service,
         
+        @InjectRepository(Profesional)
+        private profesionalRepository: Repository<Profesional>
     ){
     }
 
-    async loginClient(clientDto: LoginAuthDto): Promise<{cliente:Cliente, token:string}> {
+    async loginClient(clientDto: LoginAuthDto) {
         console.log(clientDto)
         try {
             const {email, contrasena} = clientDto;
         const cli= await this.clienteRepository.findOne({where: {email}});
+        const neg= await this.negocioRepository.findOne({where: {email}})
+        const prof= await this.profesionalRepository.findOne({where:{email}})
         console.log(cli) 
         //Comprobacion de que el cliente existe
 
-        if (!cli) throw new HttpException('Correo o contraseña invalida', 404);
-
+        if (!cli && !neg && !prof) throw new HttpException('Correo o contraseña invalida', 404);
+        if(cli){
+            
         const isPasswordValid= await compare(contrasena, cli.contrasena,)
 
         if (!isPasswordValid) throw new HttpException('Correo o contraseña invalida', 404);
@@ -60,13 +66,44 @@ export class AuthService {
         //Obtengo la IP del cliente
         const ip= await this.getIp()
 
+
         //Guardamos la conexion
         const conexion=await this.conexionesService.createNewConexiones({ip, cliente: cli});
         if(!conexion) throw new HttpException('IP Desconocida', 409);
         await this.emailService.ipLocation(cli.email,`http://localhost:3000/conexiones/${token}`);
+        //Retornamos el cliente y el token
+        return {cli, token};
+        }else if(neg){
+            
+        const isPasswordValid= await compare(contrasena, neg.contrasena,)
+
+        if (!isPasswordValid) throw new HttpException('Correo o contraseña invalida', 404);
+
+        if(!neg.activated) throw new HttpException('La cuenta no está activada', 404);
+
+        //Obtengo el token
+        const token= this.jwtService.sign({id: neg.id_negocio, email: neg.email});
+        console.log(token) 
+        //Obtengo la IP del cliente
+        
 
         //Retornamos el cliente y el token
-        return {cliente: cli, token};
+        return {neg, token};
+        }else{
+            const isPasswordValid= await compare(contrasena, prof.contrasena,)
+
+        if (!isPasswordValid) throw new HttpException('Correo o contraseña invalida', 404);
+
+
+        //Obtengo el token
+        const token= this.jwtService.sign({id: prof.id_profesional, email: prof.email});
+        console.log(token) 
+
+        //Guardamos la conexion
+
+        //Retornamos el cliente y el token
+        return {prof, token};
+        }
         } catch (error) {
             console.log(error)
             return error
@@ -110,19 +147,27 @@ export class AuthService {
     async activateClient({email, token}:{email: string, token: number}){
         console.log(email)        
         const cli= await this.clienteRepository.findOne({where: {email: email, activation_token: token}});
+        const neg= await this.negocioRepository.findOne({where: [{activation_token: token}, {activated:false}]})
         console.log(cli)
-        if(!cli) throw new HttpException('El token es invalido, intentalo de nuevo.', 404);
-
-        cli.activated=true;
-        await this.clienteRepository.save(cli);
-
-        return cli;
+        if(!cli && !neg) throw new HttpException('El token es invalido, intentalo de nuevo.', 404);
+        if(cli){
+            cli.activated=true;
+            await this.clienteRepository.save(cli);
+    
+            return cli;
+        }else{
+            neg.activated=true
+            await this.negocioRepository.save(neg)
+            return neg
+        }
+        
     }
 
     async checkToken(token:number): Promise<any>{
         try {
             console.log(token)
             const cli= await this.clienteRepository.findOne({where: {activation_token: token}});
+            const neg= await this.negocioRepository.find({where: {activation_token: token}})
             if(!cli) throw new HttpException('Client not found', 404);
             return cli
         } catch (error) {
@@ -189,24 +234,22 @@ export class AuthService {
         return ip;
     }
 
-    async registerNegocio(negocioDto: RegisterNegocioAuthDto,imagenes: Array<Express.Multer.File>){
-            
-            const {email,nombre,contrasena,CIF} = negocioDto;
+    async registerNegocio(negocioDto: RegisterNegocioAuthDto){
+            console.log(negocioDto)
+            const {email,nombre,contrasena,cif} = negocioDto;
             const neg= await this.negocioRepository.findOne({where:[
                 {email},
                 {nombre},
-                {CIF}
+                {CIF:cif}
             ] });
     
             //Si el negocio ya existe lanzamos un error
             if (neg) throw new HttpException('Negocio already exists', 409);
-            const imagenesArray= await this.s3Service.uploadFile(nombre,'negocio',imagenes);
             //Creamos el nuevo negocio y lo guardamos
             const newNegocio = this.negocioRepository.create({
                 ...negocioDto,
+                CIF:negocioDto.cif,
                 contrasena: await hash(contrasena, 10),
-                activated: true,
-                imagenes: imagenesArray,
             });
             await this.negocioRepository.save(newNegocio);
 

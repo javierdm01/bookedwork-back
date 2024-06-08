@@ -13,9 +13,10 @@ import { Cliente } from 'src/clientes/entities/cliente.entity';
 import { ConexionesService } from 'src/conexiones/conexiones.service';
 import { Negocio } from 'src/negocios/entities/negocio.entity';
 import { S3Service } from 'src/s3/s3.service';
+import { Profesional } from 'src/profesionales/entities/profesionales.entity';
 @Module({
 imports:[
-    TypeOrmModule.forFeature([Cliente,Conexion,Negocio]),
+    TypeOrmModule.forFeature([Cliente,Conexion,Negocio,Profesional]),
     JwtModule.register({
         secret: jwtConstants.secret,
         signOptions: {expiresIn: '300s'}

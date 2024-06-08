@@ -38,9 +38,8 @@ export class AuthController {
         return this.authService.resendToken(email)
     }
     @Post('registerNegocio')
-    @UseInterceptors(FilesInterceptor('imagenes'))
-    registerNegocio(@Body() negocioObject: RegisterNegocioAuthDto,@UploadedFiles() imagenes: Array<Express.Multer.File>){
-        return this.authService.registerNegocio(negocioObject,imagenes)
+    registerNegocio(@Body() negocioObject: RegisterNegocioAuthDto){
+        return this.authService.registerNegocio(negocioObject)
     }
 
     @Post('forggetPassword')
