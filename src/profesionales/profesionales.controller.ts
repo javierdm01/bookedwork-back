@@ -13,4 +13,8 @@ export class ProfesionalesController {
     return this.profesionalesService.crearProfesional(createProfesionaleDto);
   }
 
+  @Post('verReservas')
+  verReservas(@Body() email: string) {
+    return this.profesionalesService.verReservas(email['email']);
+  }
 }

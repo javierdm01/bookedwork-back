@@ -5,7 +5,7 @@ import { IsString } from "class-validator";
 export class BuscarNegocioDto {
 
     @IsString()
-    nombre: string;
+    categoria: string;
 
     ubicacion: {
         calle?:string;

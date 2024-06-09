@@ -80,7 +80,7 @@ export class NegociosService {
         }
     }*/
     async buscarNegociosPorCriterios(buscarNegocio: BuscarNegocioDto) {
-        const { nombre, fecha, ubicacion, horario } = buscarNegocio;
+        const { categoria, fecha, ubicacion, horario } = buscarNegocio;
         console.log(buscarNegocio)
         
         // Get the day of the week from the date
@@ -96,13 +96,25 @@ export class NegociosService {
           ],
           relations: ['servicios']
         });
+        console.log(categoria)
+        console.log('categorio',categoria)
         console.log(negocios)
-        const negocioFiltrados= negocios.filter(negocio=>
-            negocio.categoria.toLowerCase().includes(nombre.toLowerCase()) ||
-            negocio.nombre.toLowerCase().includes(nombre.toLowerCase())
-        )
-        console.log(negocioFiltrados)
-        return negocioFiltrados
+        if(negocios){
+            if(!categoria) return negocios
+            const negocioFiltrados= negocios.filter(negocio=>
+                negocio.categoria.toLowerCase().includes(categoria.toLowerCase()) ||
+                negocio.nombre.toLowerCase().includes(categoria.toLowerCase())
+            )
+            if(horario){
+                const negocioDate= negocioFiltrados.filter(negocio=>
+                    negocio.horario[diaSemana]!=null
+                )
+                return negocioDate
+            }
+            console.log(negocioFiltrados)
+            return negocioFiltrados
+        }
+        
 
       }
     
