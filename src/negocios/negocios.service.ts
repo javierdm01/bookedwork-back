@@ -1,11 +1,12 @@
 /* eslint-disable prettier/prettier */
-import { Inject, Injectable } from '@nestjs/common';
+import { HttpException, Injectable, NotFoundException,Inject } from '@nestjs/common';
 import { BuscarNegocioDto } from './dto/buscar-negocio.dto';
-import { Raw, Repository } from 'typeorm';
+import { Raw, Repository,Not, IsNull } from 'typeorm';
 import { Negocio } from './entities/negocio.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Reserva } from 'src/reservas/entities/reserva.entity';
 import { Servicio } from 'src/servicios/entities/servicio.entity';
+import { VerValoracionesDto } from './dto/verValoraciones.dto';
 import { S3Service } from 'src/s3/s3.service';
 
 
@@ -82,14 +83,14 @@ export class NegociosService {
         }
     }*/
     async buscarNegociosPorCriterios(buscarNegocio: BuscarNegocioDto) {
-        const { nombre, fecha, ubicacion } = buscarNegocio;
+        const { categoria, fecha, ubicacion, horario } = buscarNegocio;
         console.log(buscarNegocio)
         
         // Get the day of the week from the date
         const diasSemana = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado','domingo'];
         const nDia=new Date(fecha).getUTCDay()
         const diaSemana = diasSemana[nDia];
-        console.log(diaSemana)
+        console.log(ubicacion.ciudad)
         const negocios = await this.negocioRepository.find({
           where: [
             {
@@ -98,12 +99,25 @@ export class NegociosService {
           ],
           relations: ['servicios']
         });
-        const negocioFiltrados= negocios.filter(negocio=>
-            negocio.categoria.toLowerCase().includes(nombre.toLowerCase()) ||
-            negocio.nombre.toLowerCase().includes(nombre.toLowerCase())
-        )
-        console.log(negocioFiltrados)
-        return negocioFiltrados
+        console.log(categoria)
+        console.log('categorio',categoria)
+        console.log(negocios)
+        if(negocios){
+            if(!categoria) return negocios
+            const negocioFiltrados= negocios.filter(negocio=>
+                negocio.categoria.toLowerCase().includes(categoria.toLowerCase()) ||
+                negocio.nombre.toLowerCase().includes(categoria.toLowerCase())
+            )
+            if(horario){
+                const negocioDate= negocioFiltrados.filter(negocio=>
+                    negocio.horario[diaSemana]!=null
+                )
+                return negocioDate
+            }
+            console.log(negocioFiltrados)
+            return negocioFiltrados
+        }
+        
 
       }
     
@@ -153,6 +167,56 @@ export class NegociosService {
     }
     
     
+      
+    async getNegocios(obj:object){
+        const id= obj['id']
+        console.log(obj)
+        const bucle= (id-1)*10 //5 es el numero de saltos que quiero que me saque
+        const negocios=await this.negocioRepository.count()
+
+        if(bucle >= negocios) throw new NotFoundException(' No se encuentran mas negocios disponibles')
+        
+        return this.negocioRepository.find({
+            skip:bucle,
+            take:5,
+            order:{
+                id_negocio:"DESC"
+            }
+        })
+    }
+
+    async verValoraciones(negocio:VerValoracionesDto){
+        const email= negocio.email
+        console.log(email)
+        const negocioEncontrado= await this.negocioRepository.findOne({where:{email}})
+        if(!negocioEncontrado) throw new HttpException('El negocio es incorrecto',404)
+            console.log(negocioEncontrado)
+            const reservasConValoraciones = await this.reservaRepository.find({
+                where: { 
+                    servicio: { 
+                        negocios: { id_negocio: negocioEncontrado.id_negocio } 
+                    },
+                    valoracion: Not(IsNull()),
+                    comentario: Not(IsNull()),
+                    titulo: Not(IsNull()) 
+                    
+                },
+                relations: ['servicio','cliente'] // Cargar la relación con servicio para obtener los datos necesarios
+            });
+            console.log(reservasConValoraciones)
+            return reservasConValoraciones
+        
+      }
+
+    async getOneNegocio(nombre:string){
+        try {
+            const negocio= await this.negocioRepository.findOne({where:{nombre},relations:['servicios','servicios.profesionales']})
+            if(!negocio) throw new Error("El nombre del negocio no existe");
+            return negocio
+        } catch (error) {
+            return error
+        }
+    }
       
 
 }

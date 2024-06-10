@@ -49,16 +49,17 @@ export class EmailService {
     }
     async forgottenPassword(email: string,url:string) {
     
-        
+        console.log(email)
         try {
         await this.transporter.sendMail({
             from: 'info@bookedWork.com',
-            to:email,
+            to: email,
             subject: "Bienvenido a BookedWork",
             html: `<!DOCTYPE html>
             <html lang="en">
             <head>
                 <meta charset="UTF-8">
+                <meta http-equiv="X-UA-Compatible" content="IE=edge">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <title>Recuperación de contraseña</title>
             </head>
@@ -75,8 +76,10 @@ export class EmailService {
             </html>
             `,
         });
+        console.log('enviado')
         return true
         } catch (error) {
+        console.log(error)
         throw new Error('Error sending verification email'+error);
 
         }

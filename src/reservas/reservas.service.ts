@@ -160,4 +160,15 @@ export class ReservasService {
     });
     return horarios;
   }
+
+  async verValoraciones(){
+    const valoraciones= await this.reservaRepository.find({
+      take:8,
+      relations:['servicio','profesional','cliente','servicio.negocios']
+  })
+  console.log(valoraciones[0].servicio.negocios)
+  return valoraciones
+  }
+
+ 
 }

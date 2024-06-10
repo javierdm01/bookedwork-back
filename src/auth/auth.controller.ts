@@ -6,7 +6,8 @@ import { LoginAuthDto } from './dto/LoginAuth.dto';
 import { CheckTokenDto } from './dto/CheckToken.dto';
 import { RegisterNegocioAuthDto } from './dto/RegisterNegocioAuth.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
-
+import { ForggetPasswordDto } from './dto/ForggetPassword.dto';
+import { resetPasswordDto } from './dto/ResetPassword.dto';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService){}
@@ -26,10 +27,6 @@ export class AuthController {
         return this.authService.activateClient(userObjectActivate)
     }
 
-    @Post('checkToken')
-    checkToken(@Body() checktoken: CheckTokenDto){
-        return this.authService.checkToken(checktoken)
-    }
 
     @Post('checkEmail')
     checkEmail(@Body() email){
@@ -41,8 +38,22 @@ export class AuthController {
         return this.authService.resendToken(email)
     }
     @Post('registerNegocio')
-    @UseInterceptors(FilesInterceptor('imagenes'))
-    registerNegocio(@Body() negocioObject: RegisterNegocioAuthDto,@UploadedFiles() imagenes: Array<Express.Multer.File>){
-        return this.authService.registerNegocio(negocioObject,imagenes)
+    registerNegocio(@Body() negocioObject: RegisterNegocioAuthDto){
+        return this.authService.registerNegocio(negocioObject)
+    }
+
+    @Post('forggetPassword')
+    forggetPassword(@Body() email:object){
+        return this.authService.forggetPassword(email)
+    }
+
+    @Post('checkToken')
+    checkToken(@Body() token:object){
+        return this.authService.checkToken(token['token'])
+    }
+
+    @Post('resetPassword')
+    resetPassword(@Body() resetPassword:resetPasswordDto){
+        return this.authService.resetPassword(resetPassword)
     }
 }

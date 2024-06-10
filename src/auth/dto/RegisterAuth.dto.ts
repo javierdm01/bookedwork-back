@@ -19,7 +19,7 @@ export class RegisterAuthDto extends LoginAuthDto {
     @MaxLength(14)
     telefono: string;
 
-
+    fechaNacimiento:string;
     activated?:boolean;
     avatar?:string;
 

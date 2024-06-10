@@ -1,9 +1,21 @@
 /* eslint-disable prettier/prettier */
 
-import { IsNotEmpty, IsObject, IsString } from "class-validator";
+import { IsNotEmpty, IsNumber, IsObject, IsString } from "class-validator";
 
 export class RegisterNegocioAuthDto{
-    CIF: string;
+    @IsString()
+    @IsNotEmpty()
+    cif: string;
+
+    @IsString()
+    @IsNotEmpty()
+    categoria:string;
+
+    @IsNumber()
+    @IsNotEmpty()
+    valoracion:number;
+    
+    imagenes:Array<string>;
 
     @IsString()
     @IsNotEmpty()
@@ -22,25 +34,12 @@ export class RegisterNegocioAuthDto{
 
     @IsNotEmpty()
     @IsObject()
-    direccion: {
-        calle: string;
-        numero: string;
-        ciudad: string;
-        codigo_postal: string;
+    direccion:{
+        calle:string;
+        cidudad:string;
+        pais:string;
     }
-    
-    @IsNotEmpty()
-    @IsString()
-    categoria: string;
-    horario: {
-        lunes: Array<string>;
-        martes: Array<string>;
-        miercoles: Array<string>;
-        jueves: Array<string>;
-        viernes: Array<string>;
-        sabado: Array<string>;
-        domingo: Array<string>;
-    }
+
     @IsNotEmpty()
     @IsString()
     descripcion: string;

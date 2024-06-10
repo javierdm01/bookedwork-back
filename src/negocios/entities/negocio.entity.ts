@@ -28,7 +28,7 @@ export class Negocio {
     @Column({type: 'varchar', length: 255, nullable: false})
     contrasena: string;
 
-    @Column({type: 'json', nullable: false})
+    @Column({type: 'json', nullable: true})
     horario: object;
 
     @Column({type: 'int', nullable: false,default:0})
