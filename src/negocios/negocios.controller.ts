@@ -20,6 +20,7 @@ export class NegociosController {
   @Post('getOneNegocio')
   getOneNegocio(@Body() name: object) {
     return this.negociosService.getOneNegocio(name['nombre']);
+  }
 
   @Post('subirImagenNegocio')
   @UseInterceptors(FilesInterceptor('files')) // Interceptor para manejar archivos en la solicitud
