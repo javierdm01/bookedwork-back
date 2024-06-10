@@ -14,35 +14,36 @@ export class S3Service {
     });
   }
 
-  async uploadFile(userName:string,jFunction:string,files:Array<Express.Multer.File>): Promise<string[]>{
+  async uploadFile(userName: string, jFunction: string, files: Array<Express.Multer.File>): Promise<string[]> {
     let key;
-    const date=new Date().toISOString()
-    try{
-      switch(jFunction){
-          case 'avatar':
-              key= `avatar/${userName}-${date.replaceAll(':','')}`;
-              break;
-          default:
-              key= `negocio/${userName}/${userName}-${date.replaceAll(':','')}`;
-      }
-      const results=[]
-      await files.forEach(async (file) => {
-        const params = {
-          Bucket: 'bookedwork-img',
-          Key: key,
-          Body: Readable.from(file.buffer),
-          ContentType: file.mimetype,
-        };
-      
-        const r=(await this.s3.upload(params).promise().then((data) => data.Location))
-        results.push(r)
-      })
-      return results
+    const date = new Date().toISOString();
+    try {
+        switch (jFunction) {
+            case 'avatar':
+                key = `avatar/${userName}-${date.replaceAll(':', '')}`;
+                break;
+            default:
+                key = `negocio/${userName}/${userName}-${date.replaceAll(':', '')}`;
+        }
+        const results = [];
+        for (const file of files) {
+            const params = {
+                Bucket: 'bookedwork-img',
+                Key: key,
+                Body: Readable.from(file.buffer),
+                ContentType: file.mimetype,
+            };
+
+            const location = await this.s3.upload(params).promise().then((data) => data.Location);
+            results.push(location);
+        }
+        return results;
     } catch (error) {
-      console.error('Error uploading file to S3:', error);
-      throw error;
+        console.error('Error uploading file to S3:', error);
+        throw error;
     }
-  }
+}
+
   async uploadOneFile(userName:string,jFunction:string,files:Express.Multer.File): Promise<string>{
     let key;
     const date=new Date().toISOString()
