@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, Injectable, NotFoundException,Inject } from '@nestjs/common';
 import { BuscarNegocioDto } from './dto/buscar-negocio.dto';
 import { Raw, Repository,Not, IsNull } from 'typeorm';
 import { Negocio } from './entities/negocio.entity';
@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Reserva } from 'src/reservas/entities/reserva.entity';
 import { Servicio } from 'src/servicios/entities/servicio.entity';
 import { VerValoracionesDto } from './dto/verValoraciones.dto';
+import { S3Service } from 'src/s3/s3.service';
 
 
 @Injectable()
@@ -18,6 +19,8 @@ export class NegociosService {
     private readonly reservaRepository: Repository<Reserva>,
     @InjectRepository(Servicio)
     private readonly servicioRepository: Repository<Servicio>,
+    @Inject(S3Service)
+    private readonly s3Service: S3Service,
   ) {}
 
     //Buscar Negocios
@@ -141,6 +144,29 @@ export class NegociosService {
         }
         return services;
       }
+    async subirImagenesNegocios(email: string, imagenes: Express.Multer.File[]) {
+        const negocio = await this.negocioRepository.findOne({ where: { email } });
+        if (!negocio) throw new Error('Negocio no encontrado');
+        if (imagenes.length === 0) throw new Error('No se han subido imágenes');
+        if (imagenes.length > 5) throw new Error('No se pueden subir más de 5 imágenes');
+    
+        // Filtrar imágenes duplicadas
+        const imagenesUnicas = [...new Set(imagenes)];
+    
+        const img = await this.s3Service.uploadFile(negocio.nombre, 'negocio', imagenesUnicas);
+        console.log(img);
+    
+        // Inicializar negocio.imagenes como un array vacío si es null
+        negocio.imagenes = negocio.imagenes || [];
+    
+        // Actualizar las imágenes del negocio
+        negocio.imagenes = negocio.imagenes.concat(img);
+        
+        // Guardar los cambios en el negocio
+        return this.negocioRepository.save(negocio);
+    }
+    
+    
       
     async getNegocios(obj:object){
         const id= obj['id']

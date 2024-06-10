@@ -55,6 +55,7 @@ export class S3Service {
             const safeFileName = `${userName}-${date}-${index}`.replace(/[^a-zA-Z0-9_-]/g, '');
             const key = `${basePath}${safeFileName}.${extension}`;
 
+
             const params = {
                 Bucket: 'bookedwork-img',
                 Key: key,

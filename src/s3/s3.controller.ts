@@ -17,12 +17,14 @@ export class S3Controller {
     return this.s3Service.uploadFile(createS3.username,createS3.jFunction, files);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('uploadOneFile')
   @UseInterceptors(FileInterceptor('files')) // Interceptor para manejar archivos en la solicitud
   uploadOneFile(@Body() createS3: CreateS3Dto, @UploadedFile() files: Express.Multer.File): Promise<string>{
     return this.s3Service.uploadOneFile(createS3.username,createS3.jFunction, files);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('deleteFile')
   deleteFile(@Body() url: string) {
     return this.s3Service.deleteFile(url);
