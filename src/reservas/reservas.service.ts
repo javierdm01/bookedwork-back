@@ -30,7 +30,6 @@ export class ReservasService {
 
   //Crear una reserva
   async crearReserva(createReservaDto: CreateReservaDto) {
-    console.log(createReservaDto)
     if (createReservaDto.fechaServicio < new Date())
       throw new Error('La fecha de servicio no puede ser anterior a la actual');
     const cliente = await this.clienteRepository.findOne({
