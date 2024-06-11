@@ -10,7 +10,8 @@ import { Cliente } from 'src/clientes/entities/cliente.entity';
 import { Negocio } from 'src/negocios/entities/negocio.entity';
 import { Profesional } from 'src/profesionales/entities/profesionales.entity';
 import { Servicio } from 'src/servicios/entities/servicio.entity';
-import { addHours, addMinutes, startOfDay } from 'date-fns';
+import { addDays, addMinutes, differenceInDays } from 'date-fns';
+import { HorarioInterface } from './dto/horarioInterface';  
 
 @Injectable()
 export class ReservasService {
@@ -156,55 +157,42 @@ export class ReservasService {
   
   async comprobarDisponibilidad({ id_profesional, id_servicio, fecha }: { id_profesional: number, id_servicio: number, fecha: Date }) {
     console.log(id_profesional, id_servicio, fecha);
-    const horarios = [];
-    
     const servicio = await this.servicioRepository.findOne({ where: { id_servicio } });
     if (!servicio) throw new Error('Servicio no encontrado');
     
     const profesional = await this.profesionalRepository.findOne({ where: { id_profesional } });
     if (!profesional) throw new Error('Profesional no encontrado');
 
-    const fechaInicioDia = startOfDay(fecha);
-    const fechaFinDia = addHours(fechaInicioDia, 15); // De 8:00 a 23:00, total 15 horas
-
-    // Crear todos los intervalos de 30 minutos entre 8:00 y 23:00
-    let current = addHours(fechaInicioDia, 8);
-    while (current < fechaFinDia) {
-      horarios.push(new Date(current));
-      current = addMinutes(current, 30);
-    }
-
-    // Obtener todas las reservas del profesional para el día específico
-    const reservasExistentes = await this.reservaRepository.find({
-      where: {
-        profesional: { id_profesional: profesional.id_profesional },
-      },
+    const reservas= await this.reservaRepository.find({
+      where: { profesional: { id_profesional: profesional.id_profesional } },
       relations: ['servicio', 'profesional'],
     });
+    console.log(reservas)
+    console.log(addDays(fecha, 1))
+    const reservasHoy= reservas.filter(reserva => differenceInDays(reserva.fechaServicio, addDays(fecha, 1))==0);
+    console.log(reservasHoy);
+    const horario: HorarioInterface[] = [];
 
-    // Filtrar reservas del día específico
-    const reservasDelDia = reservasExistentes.filter((reserva) => {
-      const reservaFecha = new Date(reserva.fechaServicio);
-      return startOfDay(reservaFecha).getTime() === fechaInicioDia.getTime();
-    });
+    if (reservasHoy.length === 0) {
+        return false;
+    } else {
+        reservasHoy.forEach((reserva) => {
+          const fechaIncial=((reserva.fechaServicio.getUTCHours()/10 <1 ? '0' : '') + (reserva.fechaServicio.getUTCHours())) + ':' + ((reserva.fechaServicio.getUTCMinutes()/10 <1 ? '0' : '') + (reserva.fechaServicio.getUTCMinutes()));
+          const fechaAnadida=addMinutes(reserva.fechaServicio,reserva.servicio.duracion)
+          const fechaFinal=((fechaAnadida.getUTCHours()/10 <1 ? '0' : '') + (fechaAnadida.getUTCHours())) + ':' + ((fechaAnadida.getUTCMinutes()/10 <1 ? '0' : '') + (fechaAnadida.getUTCMinutes()));
+            
+          const horaInicio = fechaIncial
+          const horaFin = fechaFinal
+          horario.push({
+              horaInicio: horaInicio,
+              horaFin: horaFin,
+          });
+        });
+    }
 
-    // Marcar los intervalos ocupados
-    reservasDelDia.forEach((reserva) => {
-      const duracion = reserva.servicio.duracion;
-      const fechaInicio = new Date(reserva.fechaServicio);
-      for (let i = 0; i < duracion / 30; i++) {
-        const fechaOcupada = new Date(fechaInicio.getTime() + i * 30 * 60000);
-        const index = horarios.findIndex((h) => h.getTime() === fechaOcupada.getTime());
-        if (index !== -1) {
-          horarios.splice(index, 1);
-        }
-      }
-    });
+    console.log(horario);
+    
 
-    // Las franjas horarias ocupadas
-    const franjasOcupadas = horarios.filter(horario => !horarios.includes(horario));
-    console.log(franjasOcupadas);
-    return franjasOcupadas;
 }
 
 
