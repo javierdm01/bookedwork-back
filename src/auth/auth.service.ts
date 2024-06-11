@@ -42,27 +42,29 @@ export class AuthService {
     }
 
     async loginClient(clientDto: LoginAuthDto) {
-        console.log(clientDto)
+         (clientDto)
         try {
             const {email, contrasena} = clientDto;
         const cli= await this.clienteRepository.findOne({where: {email}});
         const neg= await this.negocioRepository.findOne({where: {email}})
         const prof= await this.profesionalRepository.findOne({where:{email}})
-        console.log(cli) 
         //Comprobacion de que el cliente existe
-
-        if (!cli && !neg && !prof) throw new HttpException('Correo o contraseña invalida', 404);
+        console.log(!cli,!neg,!prof)
+        if (!cli && !neg && !prof){
+            throw new HttpException('Correo o contraseña invalida', 404);
+        } 
+        
         if(cli){
             
         const isPasswordValid= await compare(contrasena, cli.contrasena,)
 
         if (!isPasswordValid) throw new HttpException('Correo o contraseña invalida', 404);
-
+        console.log('no entra')
         if(!cli.activated) throw new HttpException('La cuenta no está activada', 404);
 
         //Obtengo el token
         const token= this.jwtService.sign({id: cli.id_cliente, email: cli.email});
-        console.log(token) 
+         (token) 
         //Obtengo la IP del cliente
         const ip= await this.getIp()
 
@@ -83,7 +85,7 @@ export class AuthService {
 
         //Obtengo el token
         const token= this.jwtService.sign({id: neg.id_negocio, email: neg.email});
-        console.log(token) 
+         (token) 
         //Obtengo la IP del cliente
         
 
@@ -97,7 +99,7 @@ export class AuthService {
 
         //Obtengo el token
         const token= this.jwtService.sign({id: prof.id_profesional, email: prof.email});
-        console.log(token) 
+         (token) 
 
         //Guardamos la conexion
 
@@ -105,17 +107,17 @@ export class AuthService {
         return {prof, token};
         }
         } catch (error) {
-            console.log(error)
+             (error)
             return error
         }
 
     }
 
     async registerClient(clientDto: RegisterAuthDto){
-        console.log(clientDto)
+         (clientDto)
         try {
             const {email,contrasena,fechaNacimiento} = clientDto;
-            console.log(fechaNacimiento)
+             (fechaNacimiento)
             const telf=clientDto.telefono.trim()
             const cli= await this.clienteRepository.findOne({where: [{email},{telefono:telf}]});
 
@@ -135,20 +137,19 @@ export class AuthService {
         
 
         if(!newCli.activated)await this.emailService.sendEmail(email,newClient.activation_token);
-        console.log(newClient)
+         (newClient)
         return newClient;
         } catch (error) {
-            console.log(error)
+             (error)
             throw new HttpException(error,405)
         }
 
     }
 
     async activateClient({email, token}:{email: string, token: number}){
-        console.log(email)        
+         (email)        
         const cli= await this.clienteRepository.findOne({where: {email: email, activation_token: token}});
         const neg= await this.negocioRepository.findOne({where: [{activation_token: token}, {activated:false}]})
-        console.log(cli)
         if(!cli && !neg) throw new HttpException('El token es invalido, intentalo de nuevo.', 404);
         if(cli){
             cli.activated=true;
@@ -165,7 +166,7 @@ export class AuthService {
 
     async checkToken(token:number): Promise<any>{
         try {
-            console.log(token)
+             (token)
             const cli= await this.clienteRepository.findOne({where: {activation_token: token}});
             const neg= await this.negocioRepository.find({where: {activation_token: token}})
             if(!cli) throw new HttpException('Client not found', 404);
@@ -175,9 +176,9 @@ export class AuthService {
         }
     }
     async checkEmail({email}:{email:string}){
-        console.log(email)
+         (email)
         const cli= await this.clienteRepository.findOne({where: {email}});
-        console.log(cli)
+         (cli)
         if(cli){
             return true
         }else{
@@ -187,7 +188,7 @@ export class AuthService {
 
     async resendToken({email}:{email:string}){
         const cli= await this.clienteRepository.findOne({where: {email}});
-        console.log(cli)
+         (cli)
         await this.emailService.sendEmail(email,cli.activation_token);
         if(cli){
             return true
@@ -197,18 +198,17 @@ export class AuthService {
     }
     async forggetPassword(email:object){
         const correo=email['email'].trim()
-        console.log(correo)
 
         try {
             const cli= await this.clienteRepository.findOne({where: {email:correo}});
-            console.log(cli)
+             (cli)
             if(!cli) throw new HttpException('Client not found', 404);
             if(!cli.activated) throw new HttpException('La cuenta no está activada', 404);
             const res=await this.emailService.forgottenPassword(cli.email,`http://localhost:3000/auth/resetPassword?ecode=${cli.activation_token}`);
-            console.log(res)
+             (res)
             return true;
         } catch (error) {
-            console.log(error)
+             (error)
             return error;
         }
     }
@@ -235,7 +235,7 @@ export class AuthService {
     }
 
     async registerNegocio(negocioDto: RegisterNegocioAuthDto){
-            console.log(negocioDto)
+             (negocioDto)
             const {email,nombre,contrasena,cif} = negocioDto;
             const neg= await this.negocioRepository.findOne({where:[
                 {email},

@@ -17,15 +17,15 @@ export class S3Service {
   async uploadFile(userName: string, jFunction: string, files: Array<Express.Multer.File>): Promise<string[]> {
     const date = new Date().toISOString().replace(/[:.]/g, '');
     const results = [];
-
+    const nombre=userName.trim()
     // Define the base path based on jFunction
     let basePath = '';
     switch (jFunction) {
         case 'avatar':
-            basePath = `avatar/${userName}/`;
+            basePath = `avatar/${nombre}/`;
             break;
         default:
-            basePath = `negocio/${userName}/`;
+            basePath = `negocio/${nombre}/`;
     }
 
     // Remove any spaces or special characters from the base path
@@ -102,7 +102,6 @@ async uploadOneFile(userName: string, jFunction: string, file: Express.Multer.Fi
       const data = await this.s3.upload(params).promise();
       const result = data.Location;
 
-      console.log(result);
       return result;
   } catch (error) {
       console.error('Error uploading file to S3:', error);

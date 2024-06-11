@@ -28,10 +28,8 @@ export class ProfesionalesService {
     });
   }
   async verReservas(email: string) : Promise<Reserva[]>{
-    console.log(email)
     const profesional=await this.profesionaleRepository.findOne({where: {email}})
     if(!profesional) throw new Error('Profesional no encontrado')
-      console.log(profesional)
     return this.reservasRepository.find({where: {profesional},relations:['servicio']})
   }
   

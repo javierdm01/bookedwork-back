@@ -28,8 +28,6 @@ export class ClientesService {
 
   async verInfoCliente(email: string) {
     const cliente=await this.clienteRepository.findOne({where: {email}})
-    console.log(cliente)
-    console.log('pertenece al cliente')
     if(!cliente) throw new Error('Cliente no encontrado')
     return {
       nombre: cliente.nombre,

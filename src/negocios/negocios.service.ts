@@ -27,7 +27,6 @@ export class NegociosService {
     /*
     async buscarNegocios(buscarNegocio: BuscarNegocioDto) {
         const { nombre, direccion, fechaServicio } = buscarNegocio;
-        console.log(buscarNegocio);
         
         if (nombre) {
             // Búsqueda por categoría y ciudad
@@ -78,19 +77,18 @@ export class NegociosService {
                     direccion: Raw(alias => `unaccent(lower(${alias} ->> 'ciudad')) ILIKE '%' || unaccent(lower('${(direccion as any).ciudad}')) || '%'`)
                 }
             });
-            console.log(servicios, (direccion as any).ciudad);
+             (servicios, (direccion as any).ciudad);
             return { servicios };
         }
     }*/
     async buscarNegociosPorCriterios(buscarNegocio: BuscarNegocioDto) {
         const { categoria, fecha, ubicacion, horario } = buscarNegocio;
-        console.log(buscarNegocio)
         
         // Get the day of the week from the date
         const diasSemana = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado','domingo'];
         const nDia=new Date(fecha).getUTCDay()
         const diaSemana = diasSemana[nDia];
-        console.log(ubicacion.ciudad)
+         (ubicacion.ciudad)
         const negocios = await this.negocioRepository.find({
           where: [
             {
@@ -99,9 +97,6 @@ export class NegociosService {
           ],
           relations: ['servicios']
         });
-        console.log(categoria)
-        console.log('categorio',categoria)
-        console.log(negocios)
         if(negocios){
             if(!categoria) return negocios
             const negocioFiltrados= negocios.filter(negocio=>
@@ -114,7 +109,6 @@ export class NegociosService {
                 )
                 return negocioDate
             }
-            console.log(negocioFiltrados)
             return negocioFiltrados
         }
         
@@ -154,7 +148,6 @@ export class NegociosService {
         const imagenesUnicas = [...new Set(imagenes)];
     
         const img = await this.s3Service.uploadFile(negocio.nombre, 'negocio', imagenesUnicas);
-        console.log(img);
     
         // Inicializar negocio.imagenes como un array vacío si es null
         negocio.imagenes = negocio.imagenes || [];
@@ -170,7 +163,6 @@ export class NegociosService {
       
     async getNegocios(obj:object){
         const id= obj['id']
-        console.log(obj)
         const bucle= (id-1)*10 //5 es el numero de saltos que quiero que me saque
         const negocios=await this.negocioRepository.count()
 
@@ -187,10 +179,8 @@ export class NegociosService {
 
     async verValoraciones(negocio:VerValoracionesDto){
         const email= negocio.email
-        console.log(email)
         const negocioEncontrado= await this.negocioRepository.findOne({where:{email}})
         if(!negocioEncontrado) throw new HttpException('El negocio es incorrecto',404)
-            console.log(negocioEncontrado)
             const reservasConValoraciones = await this.reservaRepository.find({
                 where: { 
                     servicio: { 
@@ -203,7 +193,6 @@ export class NegociosService {
                 },
                 relations: ['servicio','cliente'] // Cargar la relación con servicio para obtener los datos necesarios
             });
-            console.log(reservasConValoraciones)
             return reservasConValoraciones
         
       }

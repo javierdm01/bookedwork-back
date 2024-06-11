@@ -48,8 +48,6 @@ export class EmailService {
         }
     }
     async forgottenPassword(email: string,url:string) {
-    
-        console.log(email)
         try {
         await this.transporter.sendMail({
             from: 'info@bookedWork.com',
@@ -76,10 +74,8 @@ export class EmailService {
             </html>
             `,
         });
-        console.log('enviado')
         return true
         } catch (error) {
-        console.log(error)
         throw new Error('Error sending verification email'+error);
 
         }
