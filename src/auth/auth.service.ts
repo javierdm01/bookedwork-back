@@ -42,14 +42,12 @@ export class AuthService {
     }
 
     async loginClient(clientDto: LoginAuthDto) {
-         (clientDto)
         try {
             const {email, contrasena} = clientDto;
         const cli= await this.clienteRepository.findOne({where: {email}});
         const neg= await this.negocioRepository.findOne({where: {email}})
         const prof= await this.profesionalRepository.findOne({where:{email}})
         //Comprobacion de que el cliente existe
-        console.log(!cli,!neg,!prof)
         if (!cli && !neg && !prof){
             throw new HttpException('Correo o contraseña invalida', 404);
         } 
@@ -59,12 +57,10 @@ export class AuthService {
         const isPasswordValid= await compare(contrasena, cli.contrasena,)
 
         if (!isPasswordValid) throw new HttpException('Correo o contraseña invalida', 404);
-        console.log('no entra')
         if(!cli.activated) throw new HttpException('La cuenta no está activada', 404);
 
         //Obtengo el token
         const token= this.jwtService.sign({id: cli.id_cliente, email: cli.email});
-         (token) 
         //Obtengo la IP del cliente
         const ip= await this.getIp()
 
@@ -114,40 +110,43 @@ export class AuthService {
     }
 
     async registerClient(clientDto: RegisterAuthDto){
-         (clientDto)
         try {
-            const {email,contrasena,fechaNacimiento} = clientDto;
-             (fechaNacimiento)
+            
+            const {email,contrasena,fechaNacimiento,direccion} = clientDto;
+             const dir= {
+                calle:direccion.calle,
+                ciudad:direccion.ciudad,
+                pais:'España'
+             }
             const telf=clientDto.telefono.trim()
             const cli= await this.clienteRepository.findOne({where: [{email},{telefono:telf}]});
 
         //Si el cliente ya existe lanzamos un error
         if(cli) throw new HttpException('Ya hay un cliente asociado al correo o al número de teléfono.', 409);
-
+             console.log(clientDto)
         //Creamos el nuevo cliente y lo guardamos
         const hasedPassword=contrasena ?await hash(contrasena, 10):''
-        const newClient= this.clienteRepository.create({
+        const newClient=await  this.clienteRepository.create({
             ...clientDto,
             telefono:telf,
             contrasena: hasedPassword,
-            fecha_nacimiento:new Date(fechaNacimiento)
+            fecha_nacimiento:new Date(fechaNacimiento),
+            direccion:dir
         });
         const newCli=await this.clienteRepository.save(newClient);
         if(!newCli) throw new HttpException('Ha ocurrido un error al guardar el usuario. Intentelo de nuevo o más tarde.',501)
         
 
-        if(!newCli.activated)await this.emailService.sendEmail(email,newClient.activation_token);
-         (newClient)
-        return newClient;
+        if(!newCli.activated) await this.emailService.sendEmail(email,newClient.activation_token);
+        console.log(newCli)
+        return newCli;
         } catch (error) {
-             (error)
             throw new HttpException(error,405)
         }
 
     }
 
-    async activateClient({email, token}:{email: string, token: number}){
-         (email)        
+    async activateClient({email, token}:{email: string, token: number}){      
         const cli= await this.clienteRepository.findOne({where: {email: email, activation_token: token}});
         const neg= await this.negocioRepository.findOne({where: [{activation_token: token}, {activated:false}]})
         if(!cli && !neg) throw new HttpException('El token es invalido, intentalo de nuevo.', 404);
@@ -166,9 +165,7 @@ export class AuthService {
 
     async checkToken(token:number): Promise<any>{
         try {
-             (token)
             const cli= await this.clienteRepository.findOne({where: {activation_token: token}});
-            const neg= await this.negocioRepository.find({where: {activation_token: token}})
             if(!cli) throw new HttpException('Client not found', 404);
             return cli
         } catch (error) {
@@ -176,9 +173,7 @@ export class AuthService {
         }
     }
     async checkEmail({email}:{email:string}){
-         (email)
         const cli= await this.clienteRepository.findOne({where: {email}});
-         (cli)
         if(cli){
             return true
         }else{
@@ -188,7 +183,6 @@ export class AuthService {
 
     async resendToken({email}:{email:string}){
         const cli= await this.clienteRepository.findOne({where: {email}});
-         (cli)
         await this.emailService.sendEmail(email,cli.activation_token);
         if(cli){
             return true
@@ -201,11 +195,9 @@ export class AuthService {
 
         try {
             const cli= await this.clienteRepository.findOne({where: {email:correo}});
-             (cli)
             if(!cli) throw new HttpException('Client not found', 404);
             if(!cli.activated) throw new HttpException('La cuenta no está activada', 404);
             const res=await this.emailService.forgottenPassword(cli.email,`http://localhost:3000/auth/resetPassword?ecode=${cli.activation_token}`);
-             (res)
             return true;
         } catch (error) {
              (error)
@@ -235,14 +227,17 @@ export class AuthService {
     }
 
     async registerNegocio(negocioDto: RegisterNegocioAuthDto){
-             (negocioDto)
-            const {email,nombre,contrasena,cif} = negocioDto;
+            const {email,nombre,contrasena,cif,direccion} = negocioDto;
             const neg= await this.negocioRepository.findOne({where:[
                 {email},
                 {nombre},
                 {CIF:cif}
             ] });
-    
+            const dir={
+                calle: direccion.calle,
+                ciudad:direccion.cidudad,
+                pais:'España'
+            }
             //Si el negocio ya existe lanzamos un error
             if (neg) throw new HttpException('Negocio already exists', 409);
             //Creamos el nuevo negocio y lo guardamos
@@ -250,6 +245,8 @@ export class AuthService {
                 ...negocioDto,
                 CIF:negocioDto.cif,
                 contrasena: await hash(contrasena, 10),
+                activated:true,
+                direccion:dir
             });
             await this.negocioRepository.save(newNegocio);
 

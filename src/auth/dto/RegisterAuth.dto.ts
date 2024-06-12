@@ -4,24 +4,19 @@ import { LoginAuthDto } from "./LoginAuth.dto";
 
 
 export class RegisterAuthDto extends LoginAuthDto {
-    @IsString()
-    @IsNotEmpty()
-    @MaxLength(30)
+
     nombre: string;
 
-    @IsString()
-    @IsNotEmpty()
-    @MaxLength(50)
     apellidos: string;
 
-    @IsString()
-    @IsNotEmpty()
-    @MaxLength(14)
     telefono: string;
 
+    direccion:{
+        calle:string;
+        ciudad:string;
+    }
+    
     fechaNacimiento:string;
-    activated?:boolean;
-    avatar?:string;
 
 
     

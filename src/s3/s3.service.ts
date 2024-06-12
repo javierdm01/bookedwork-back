@@ -75,18 +75,19 @@ export class S3Service {
 }
 
 
-async uploadOneFile(userName: string, jFunction: string, file: Express.Multer.File): Promise<string> {
+async uploadOneFile(userName: string, jFunction: string, file: Express.Multer.File): Promise<string[]> {
   let key;
   const date = new Date().toISOString().replace(/[:.]/g, '');
 
   try {
       // Definir la clave basada en jFunction y eliminar caracteres no deseados
+      const nombre=userName.trim()
       switch (jFunction) {
           case 'avatar':
-              key = `avatar/${userName}-${date}`;
+              key = `avatar/${nombre}-${date}`;
               break;
           default:
-              key = `negocio/${userName}/${userName}-${date}`;
+              key = `negocio/${nombre}/${userName}-${date}`;
       }
 
       // Eliminar caracteres especiales de la clave
@@ -100,9 +101,10 @@ async uploadOneFile(userName: string, jFunction: string, file: Express.Multer.Fi
       };
 
       const data = await this.s3.upload(params).promise();
+      const response=[]
       const result = data.Location;
-
-      return result;
+      response.push(result)
+      return response;
   } catch (error) {
       console.error('Error uploading file to S3:', error);
       throw error;

@@ -103,7 +103,6 @@ export class ReservasService {
       servicio.nombre, // Suponiendo que el nombre del negocio es el mismo que el del servicio
       reserva.fechaServicio,
     );
-    console.log(reserva)
     return reserva;
   }
 
@@ -167,10 +166,7 @@ export class ReservasService {
       where: { profesional: { id_profesional: profesional.id_profesional } },
       relations: ['servicio', 'profesional'],
     });
-    console.log(reservas)
-    console.log(addDays(fecha, 1))
     const reservasHoy= reservas.filter(reserva => differenceInDays(reserva.fechaServicio, addDays(fecha, 1))==0);
-    console.log(reservasHoy);
     const horario: HorarioInterface[] = [];
 
     if (reservasHoy.length === 0) {
@@ -190,8 +186,7 @@ export class ReservasService {
         });
     }
 
-    console.log(horario);
-    
+    return horario
 
 }
 

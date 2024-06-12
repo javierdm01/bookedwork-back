@@ -20,8 +20,10 @@ export class S3Controller {
   @UseGuards(JwtAuthGuard)
   @Post('uploadOneFile')
   @UseInterceptors(FileInterceptor('files')) // Interceptor para manejar archivos en la solicitud
-  uploadOneFile(@Body() createS3: CreateS3Dto, @UploadedFile() files: Express.Multer.File): Promise<string>{
-    return this.s3Service.uploadOneFile(createS3.username,createS3.jFunction, files);
+  async uploadOneFile(@Body() createS3: CreateS3Dto, @UploadedFile() files: Express.Multer.File): Promise<string[]>{
+    const res=await this.s3Service.uploadOneFile(createS3.username,createS3.jFunction, files);
+    console.log(res)
+    return res
   }
 
   @UseGuards(JwtAuthGuard)

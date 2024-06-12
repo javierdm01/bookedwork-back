@@ -40,21 +40,26 @@ export class ClientesService {
     } 
   }
   async updateCliente(modificarCliente:UpdateClienteDto):Promise<Cliente>{
-    const cliente=await this.clienteRepository.findOne({where: {email:modificarCliente.email}})
+    console.log(modificarCliente)
+    const cliente=await this.clienteRepository.findOne({where: {email:modificarCliente['data'].email}})
     if(!cliente) throw new Error('Cliente no encontrado')
-      let newAvatar;
-    if(modificarCliente.avatar){
+    
+    if(modificarCliente['data'].avatar){
       if(cliente.avatar){
         await this.s3Service.deleteFile(cliente.avatar)
       }
-       newAvatar=await this.s3Service.uploadOneFile(cliente.nombre,'avatar',modificarCliente.avatar)
-    }
+      }
+      const avatar= modificarCliente['data'].avatar ? modificarCliente['data'].avatar : cliente.avatar
+      
     const clienteUpdate: Partial<Cliente>={
-      ...modificarCliente,
-      avatar:newAvatar
+      ...modificarCliente['data'],
+      avatar:avatar
    }
-    await this.clienteRepository.update(cliente,clienteUpdate)
+  
+    const upd=await this.clienteRepository.update(cliente.id_cliente,clienteUpdate)
+    
     await this.clienteRepository.save(cliente)
+    console.log(cliente)
     return cliente
   }
 
