@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Inject, Injectable } from '@nestjs/common';
+import { HttpException, Inject, Injectable } from '@nestjs/common';
 import { CreateReservaDto } from './dto/create-reserva.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Reserva } from './entities/reserva.entity';
@@ -199,5 +199,24 @@ export class ReservasService {
   return valoraciones
   }
 
+  async getReservasUser(email: string): Promise<Reserva[]> {
+    console.log(email);
+
+    // Buscar al cliente por su email
+    const cli = await this.clienteRepository.findOne({ where: { email:email['email'] } });
+    console.log(cli);
+
+    if (!cli) {
+      throw new HttpException('No se encuentra el cliente', 404);
+    }
+
+    // Buscar reservas por el ID del cliente
+    const reserva = await this.reservaRepository.find({ where: { cliente: {
+      id_cliente: cli.id_cliente
+    } }, relations:['cliente','profesional','servicio','servicio.negocios'] });
+    console.log(reserva);
+
+    return reserva;
+  }
  
 }

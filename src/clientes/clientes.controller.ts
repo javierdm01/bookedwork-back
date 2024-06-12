@@ -20,10 +20,14 @@ export class ClientesController {
   verInfoCliente(@Body('email') email: string) {
     return this.clientesService.verInfoCliente(email);
   }
-
+  @UseGuards(JwtAuthGuard)
   @Post('update')
   updateCliente(@Body() updateClientDto:UpdateClienteDto) {
     return this.clientesService.updateCliente(updateClientDto);
   }
-
+  @UseGuards(JwtAuthGuard)
+  @Post('eliminarCliente')
+  eliminarCliente(@Body() email:string) {
+    return this.clientesService.eliminarCliente(email);
+  }
 }

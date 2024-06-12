@@ -27,4 +27,8 @@ export class ReservasController {
     return this.reservasService.verValoraciones();
   }
 
+  @Post('getReservasUser')
+  getReservasUser(@Body() email:string){
+    return this.reservasService.getReservasUser(email)
+  }
 }

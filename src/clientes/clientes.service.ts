@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Inject, Injectable } from '@nestjs/common';
+import { HttpException, Inject, Injectable } from '@nestjs/common';
 import { S3Service } from 'src/s3/s3.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cliente } from './entities/cliente.entity';
@@ -63,6 +63,12 @@ export class ClientesService {
     return cliente
   }
 
+  async eliminarCliente(email:string){
+    const mail= email['email']
+    const cli=await this.clienteRepository.findOne({where:{email:mail}})
+    if(!cli) throw new HttpException('No se encuentra el cliente',404)
+    return await this.clienteRepository.delete(cli)
+  }
 
   
 }
