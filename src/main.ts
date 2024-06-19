@@ -4,12 +4,11 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as fs from 'fs';
-import * as path from 'path';
 
 async function bootstrap() {
   const httpsOptions = {
-    key: fs.readFileSync(path.join(__dirname, '../certs/privkey.pem')),
-    cert: fs.readFileSync(path.join(__dirname, '../certs/fullchain.pem')),
+    key: fs.readFileSync('/etc/letsencrypt/live/api.bookedwork.com-0002/privkey.pem'),
+    cert: fs.readFileSync('/etc/letsencrypt/live/api.bookedwork.com-0002/fullchain.pem'),
   };
   const app = await NestFactory.create(AppModule,{cors:true,httpsOptions});
   
