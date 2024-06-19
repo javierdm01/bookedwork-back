@@ -21,6 +21,8 @@ lerna-debug.log*
 .pem
 .crt
 .key
+cert.crt
+cert.key
 javi.pem
 # IDEs and editors
 /.idea
