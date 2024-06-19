@@ -19,6 +19,8 @@ lerna-debug.log*
 /coverage
 /.nyc_output
 .pem
+.crt
+.key
 javi.pem
 # IDEs and editors
 /.idea

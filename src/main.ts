@@ -3,13 +3,16 @@ import "reflect-metadata";
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import * as https from 'https';
-import axios from 'axios';
+import * as fs from 'fs';
+import * as path from 'path';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule,{cors:true});
-  axios.defaults.baseURL = 'http://ec2-13-53-129-231.eu-north-1.compute.amazonaws.com:5000';
-  axios.defaults.httpsAgent = new https.Agent({ rejectUnauthorized: false });
+  const httpsOptions = {
+    key: fs.readFileSync(path.join(__dirname, '../certs/cert.key')),
+    cert: fs.readFileSync(path.join(__dirname, '../certs/cert.crt')),
+  };
+  const app = await NestFactory.create(AppModule,{cors:true,httpsOptions});
+  
   app.enableCors();
   const config = new DocumentBuilder()
     .setTitle('ISO 27001 EXAMPLE')
