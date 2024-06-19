@@ -29,7 +29,9 @@
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/swagger": "^7.3.1",
     "@nestjs/typeorm": "^10.0.2",
+    "@types/axios": "^0.14.0",
     "aws-sdk": "^2.1615.0",
+    "axios": "^1.7.2",
     "bcrypt": "^5.1.1",
     "class-validator": "^0.14.1",
     "date-fns": "^3.6.0",
@@ -37,8 +39,7 @@
     "passport-jwt": "^4.0.1",
     "pg": "^8.11.5",
     "reflect-metadata": "^0.2.0",
-    "rxjs": "^7.8.1",
-    "wrangler": "^3.55.0"
+    "rxjs": "^7.8.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",

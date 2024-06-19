@@ -174,7 +174,8 @@ export class AuthService {
     }
     async checkEmail({email}:{email:string}){
         const cli= await this.clienteRepository.findOne({where: {email}});
-        if(cli){
+        const neg= await this.negocioRepository.findOne({where: {email}});
+        if(cli || neg){
             return true
         }else{
             return false
@@ -197,7 +198,7 @@ export class AuthService {
             const cli= await this.clienteRepository.findOne({where: {email:correo}});
             if(!cli) throw new HttpException('Client not found', 404);
             if(!cli.activated) throw new HttpException('La cuenta no está activada', 404);
-            const res=await this.emailService.forgottenPassword(cli.email,`http://localhost:3000/auth/resetPassword?ecode=${cli.activation_token}`);
+            await this.emailService.forgottenPassword(cli.email,`http://localhost:3000/auth/resetPassword?ecode=${cli.activation_token}`);
             return true;
         } catch (error) {
              (error)
@@ -228,31 +229,36 @@ export class AuthService {
 
     async registerNegocio(negocioDto: RegisterNegocioAuthDto){
             const {email,nombre,contrasena,cif,direccion} = negocioDto;
-            const neg= await this.negocioRepository.findOne({where:[
-                {email},
-                {nombre},
-                {CIF:cif}
-            ] });
-            const dir={
-                calle: direccion.calle,
-                ciudad:direccion.cidudad,
-                pais:'España'
+            try {
+                const neg= await this.negocioRepository.findOne({where:[
+                    {email},
+                    {nombre},
+                    {CIF:cif}
+                ] });
+                const dir={
+                    calle: direccion.calle,
+                    ciudad:direccion.ciudad,
+                    pais:'España'
+                }
+                //Si el negocio ya existe lanzamos un error
+                if (neg) throw new HttpException('El negocio ya existe', 409);
+                //Creamos el nuevo negocio y lo guardamos
+                const newNegocio = this.negocioRepository.create({
+                    ...negocioDto,
+                    CIF:negocioDto.cif,
+                    contrasena: await hash(contrasena, 10),
+                    activated:true,
+                    direccion:dir
+                });
+                await this.negocioRepository.save(newNegocio);
+    
+                await this.emailService.sendMailNegocio(email, newNegocio.activation_token);
+                console.log(newNegocio)
+                return newNegocio;
+            } catch (error) {
+                console.log(error)
+                return error
             }
-            //Si el negocio ya existe lanzamos un error
-            if (neg) throw new HttpException('Negocio already exists', 409);
-            //Creamos el nuevo negocio y lo guardamos
-            const newNegocio = this.negocioRepository.create({
-                ...negocioDto,
-                CIF:negocioDto.cif,
-                contrasena: await hash(contrasena, 10),
-                activated:true,
-                direccion:dir
-            });
-            await this.negocioRepository.save(newNegocio);
-
-            await this.emailService.sendMailNegocio(email, newNegocio.activation_token);
-
-            return newNegocio;
 
     }
 }

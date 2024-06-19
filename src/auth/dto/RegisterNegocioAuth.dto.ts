@@ -36,7 +36,7 @@ export class RegisterNegocioAuthDto{
     @IsObject()
     direccion:{
         calle:string;
-        cidudad:string;
+        ciudad:string;
         pais:string;
     }
 

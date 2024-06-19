@@ -1,12 +1,9 @@
 /* eslint-disable prettier/prettier */
-import { Body, Controller, Post, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterAuthDto } from './dto/RegisterAuth.dto';
 import { LoginAuthDto } from './dto/LoginAuth.dto';
-import { CheckTokenDto } from './dto/CheckToken.dto';
 import { RegisterNegocioAuthDto } from './dto/RegisterNegocioAuth.dto';
-import { FilesInterceptor } from '@nestjs/platform-express';
-import { ForggetPasswordDto } from './dto/ForggetPassword.dto';
 import { resetPasswordDto } from './dto/ResetPassword.dto';
 @Controller('auth')
 export class AuthController {
