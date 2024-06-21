@@ -138,7 +138,6 @@ export class AuthService {
         
 
         if(!newCli.activated) await this.emailService.sendEmail(email,newClient.activation_token);
-        console.log(newCli)
         return newCli;
         } catch (error) {
             throw new HttpException(error,405)
@@ -148,7 +147,7 @@ export class AuthService {
 
     async activateClient({email, token}:{email: string, token: number}){      
         const cli= await this.clienteRepository.findOne({where: {email: email, activation_token: token}});
-        const neg= await this.negocioRepository.findOne({where: [{activation_token: token}, {activated:false}]})
+        const neg= await this.negocioRepository.findOne({where: {activation_token: token, email: email}})
         if(!cli && !neg) throw new HttpException('El token es invalido, intentalo de nuevo.', 404);
         if(cli){
             cli.activated=true;

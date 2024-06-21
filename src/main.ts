@@ -3,14 +3,9 @@ import "reflect-metadata";
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import * as fs from 'fs';
 
 async function bootstrap() {
-  const httpsOptions = {
-    key: fs.readFileSync('/etc/letsencrypt/archive/api.bookedwork.com-0002/privkey1.pem'),
-    cert: fs.readFileSync('/etc/letsencrypt/archive/api.bookedwork.com-0002/fullchain1.pem'),
-  };
-  const app = await NestFactory.create(AppModule,{cors:true,httpsOptions});
+  const app = await NestFactory.create(AppModule,{cors:true});
   
   app.enableCors();
   const config = new DocumentBuilder()
